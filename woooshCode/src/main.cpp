@@ -33,19 +33,15 @@ using namespace vex;
 competition Competition;
 motor_group leftdrive(left1, left2, left3);
 motor_group rightdrive(right1, right2, right3);
-motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, cata1, cata2);
+motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, Punchything);
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   Inertial.calibrate();
-  wait(3, sec);
+  wait(5, sec);
   Brain.Screen.print("Ready");
 }
-//establishes the angle where the catapult needs to be to be at the bottom
-int shootpos = Catarotate.angle(deg);
-// runs when R1 is pressed to shoot a tri ball
-
 
 void gyroTurn (float target, float timeout) {
   // establishes when the turn started 
@@ -53,9 +49,12 @@ void gyroTurn (float target, float timeout) {
   // limits the time so that it doesn't waste time fixing marginal error
   while (vex::timer::system() - startTime < timeout * 1000) {
     //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    float speed = (target - Inertial.rotation(deg)) * .4;
+    float speed = (target - Inertial.rotation(deg)) * .2;
     rightdrive.spin(fwd, -speed, pct);
     leftdrive.spin(fwd, speed, pct);
+    if ((target - Inertial.rotation(deg)) < 1){
+      break;
+    }
   }
   //stops slowly opposed to abruptly
   leftdrive.stop(brake);
@@ -158,7 +157,6 @@ void fourball(){
   allmotors.stop();
 
 }
-
 void qualsoffense () {
   // opens the wing to remove the tri ball
   //drives to remove the tri ball
@@ -211,84 +209,6 @@ void elimoffense(){
   lineDrive(1000,1);
   lineDrive(-10,1);
   allmotors.stop();
-}
-void shoot(){
-  while (Catarotate.position(deg) < cataLoadedPos) {
-        cata1.spin(fwd,35,pct);
-        cata2.spin(fwd,35,pct);
-  }
-
-  cata1.stop(coast);
-  cata2.stop(coast);
-
-  wait(.3, sec);
-  while (Catarotate.position(deg)>cataLoadedPos){
-    cata1.spin(fwd,45,pct);
-    cata2.spin(fwd,45,pct);
-  }
-  allmotors.stop();
-}
-
-
-void skills (){
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  shoot();
-  intake.spin(fwd,-100,pct);
-  gyroTurn(40,1.5);
-  lineDrive(-100, 3);
-  gyroTurn(0,1);
-  rightwing.open();
-  leftwing.open();
-  lineDrive(-15,1.5);
-  gyroTurn(-20,1);
-  rightwing.close();
-  lineDrive(10,1);
-  lineDrive(-10,1);
-  gyroTurn(-120,2);
-  lineDrive(15,1);
-  gyroTurn(-30,1);
-  lineDrive(15,1);
-
 }
 void finalsdefense(){
   //opens wing to remove ball in the corner
@@ -401,31 +321,12 @@ void usercontrol () {
 
 
     if (con.ButtonB.pressing()){
-        cata1.spin(fwd,-45,pct);
-        cata2.spin(fwd,-45,pct);
-    } else {
-      //if cata moving up then stop cata motor
-      if (Catarotate.velocity(rpm) < 0) {
-          cata1.stop(brake);
-          cata2.stop(brake);
-      //if cata not moving up and cata above the loaded position then sopin cata motor to load
-      } else if (Catarotate.position(deg) < cataLoadedPos) {
-        cata1.spin(fwd,45,pct);
-        cata2.spin(fwd,45,pct);
-      //if cata not moving up and cata is below the loaded position then...
-      } else {
-        //if pressing launch button spin cata to launch
-        if (con.ButtonR1.pressing()){
-          cata1.spin(fwd,45,pct);
-          cata2.spin(fwd,45,pct);
-        //if launch button is not pressed wait and stop motors
-        } else {
-          cata1.stop(coast);
-          cata2.stop(coast);
-        }
-      }
+      Punchything.spin(fwd,100,pct);
     }
-  }
+    else {
+      Punchything.stop();
+    }
+}
 }
 
 

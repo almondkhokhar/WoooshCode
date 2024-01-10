@@ -7,17 +7,19 @@ brain Brain;
 controller con;
 motor right1 = motor(PORT10,true);
 motor right2 = motor(PORT8,true);
-motor right3 = motor(PORT6,true);
-motor left1 = motor(PORT2,true);
-motor left2 = motor(PORT1, true);
-motor left3 = motor(PORT4, true);
-motor cata1 = motor(PORT11, true);
-motor cata2 = motor(PORT20,false);
-motor intake = motor(PORT7, false);
+motor right3 = motor(PORT9,false);
+motor left1 = motor(PORT18,true);
+motor left2 = motor(PORT19, true);
+motor left3 = motor(PORT20, true);
+motor Punchything = motor(PORT7, true);
+motor intake = motor(PORT17, false);
 pneumatics rightwing = pneumatics(Brain.ThreeWirePort.G);
 pneumatics leftwing = pneumatics(Brain.ThreeWirePort.H);
-inertial Inertial = inertial(PORT19);
-rotation Catarotate = rotation(PORT12);
+pneumatics uppy1 = pneumatics(Brain.ThreeWirePort.D);
+pneumatics uppy2 = pneumatics(Brain.ThreeWirePort.C);
+pneumatics uppy3 = pneumatics(Brain.ThreeWirePort.A);
+pneumatics uppy4 = pneumatics(Brain.ThreeWirePort.B);
+inertial Inertial = inertial(PORT16);
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  *
