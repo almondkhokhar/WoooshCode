@@ -69,18 +69,19 @@ void lineDrive (float dist, float timelim){
   int startTime = vex::timer::system();
   //limits the time the procedure can run
   while (vex::timer::system() - startTime < timelim * 1000) {
-    //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    double  speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
-    // explain here
-    double turnErr = startAng - Inertial.rotation(deg);
-    rightdrive.spin(fwd, speed-turnErr, pct);
-    leftdrive.spin(fwd, speed+turnErr, pct);
-    wait(5, msec);
-  
+     while (1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (right1.position(deg)-startPos)*3.14159/180*3.25<-1){
+        //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
+        double  speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
+        // explain here
+        double turnErr = startAng - Inertial.rotation(deg);
+        rightdrive.spin(fwd, speed-turnErr, pct);
+        leftdrive.spin(fwd, speed+turnErr, pct);
+        wait(5, msec);
+     }
+  }
   leftdrive.stop();
   rightdrive.stop();
 }
-} 
 
 void backup(){
   lineDrive(-100,2);
@@ -107,39 +108,48 @@ void swing (float turnSharpness,float dist, float timelim){
   double startAng = Inertial.rotation(deg);
   int startTime = vex::timer::system();
   //limits the time the procedure can run
+
+  
+
   while (vex::timer::system() - startTime < timelim * 1000) {
-    //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    double speed = (dist - (left1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
-    if (turnSharpness < 0)
-    {
-      speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3;
+    while (1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (right1.position(deg)-startPos)*3.14159/180*3.25<-1){
+
+      //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
+      double speed = (dist - (left1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
+      if (turnSharpness < 0)
+      {
+        speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3;
+      }
+      // explain here
+      double turnErr = startAng - Inertial.rotation(deg);
+      if (turnSharpness == 0){
+        rightdrive.spin(fwd, speed-turnErr, pct);
+        leftdrive.spin(fwd, speed+turnErr, pct);
+      }
+      if (100>turnSharpness > 0){
+        rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
+        leftdrive.spin(fwd, speed, pct);
+      }
+      if (turnSharpness >100){
+        rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
+        leftdrive.spin(fwd, -speed, pct);
+      }
+      if (-100 < turnSharpness < 0){
+        rightdrive.spin(fwd, speed, pct);
+        leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
+      }
+      if (turnSharpness< -100){
+        rightdrive.spin(fwd, -speed, pct);
+        leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
+      }
+      wait(5, msec);
     }
-    // explain here
-    double turnErr = startAng - Inertial.rotation(deg);
-    if (turnSharpness == 0){
-      rightdrive.spin(fwd, speed-turnErr, pct);
-      leftdrive.spin(fwd, speed+turnErr, pct);
-    }
-    if (100>turnSharpness > 0){
-      rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
-      leftdrive.spin(fwd, speed, pct);
-    }
-    if (turnSharpness >100){
-      rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
-      leftdrive.spin(fwd, -speed, pct);
-    }
-    if (-100 < turnSharpness < 0){
-      rightdrive.spin(fwd, speed, pct);
-      leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
-    }
-    if (turnSharpness< -100){
-      rightdrive.spin(fwd, -speed, pct);
-      leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
-    }
-    wait(5, msec);
   }
-  allmotors.stop();
+  rightdrive.stop();
+  leftdrive.stop();
 }
+
+
 
 
 
