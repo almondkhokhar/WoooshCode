@@ -20,14 +20,12 @@ bool intakeToggle = false;
 bool rwingtoggle = false;
 bool lwingtoggle = false;
 bool bwingtoggle = false;
-bool f1 = true;
-bool f2 = true;
-bool f3 = true;
+bool Shoottogg = false;
 bool f1loop = true;
 bool f2loop = true;
 bool f3loop = true;
+bool f4loop = true;
 int counter = 0;
-double cataLoadedPos = 112;
 using namespace vex;
 // defines motor groups and abstracts the motors into simpler components
 competition Competition;
@@ -43,6 +41,7 @@ void pre_auton(void) {
   Brain.Screen.print("Ready");
 }
 
+
 void gyroTurn (float target, float timeout) {
   // establishes when the turn started 
   int startTime = vex::timer::system();
@@ -52,33 +51,97 @@ void gyroTurn (float target, float timeout) {
     float speed = (target - Inertial.rotation(deg)) * .2;
     rightdrive.spin(fwd, -speed, pct);
     leftdrive.spin(fwd, speed, pct);
-    if ((target - Inertial.rotation(deg)) < 1){
-      break;
-    }
   }
   //stops slowly opposed to abruptly
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
+  leftdrive.stop();
+  rightdrive.stop();
+
 }
+
 
 void lineDrive (float dist, float timelim){
   //establishes when we started the procedure
   //records a starting position of the bot
-  double startPos = right1.position(deg);
+  double  startPos = right1.position(deg);
+
   //records a starting position of the bot
   double startAng = Inertial.rotation(deg);
   int startTime = vex::timer::system();
   //limits the time the procedure can run
   while (vex::timer::system() - startTime < timelim * 1000) {
     //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    double speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 2.4;
+    double  speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
     // explain here
     double turnErr = startAng - Inertial.rotation(deg);
     rightdrive.spin(fwd, speed-turnErr, pct);
     leftdrive.spin(fwd, speed+turnErr, pct);
     wait(5, msec);
- }
+  
+  leftdrive.stop();
+  rightdrive.stop();
 }
+} 
+
+void backup(){
+  lineDrive(-100,2);
+  lineDrive(10,1);
+}
+
+/**
+ * @brief does a straight line or a swing
+ * 
+ * @param turnSharpness how sharp it turns (-200, 200) + => right, - => left, 0 for straight
+ * @param dist 
+ * @param timelim 
+ */
+void swing (float turnSharpness,float dist, float timelim){
+  //establishes when we started the procedure
+  //records a starting position of the bot
+  double startPos = left1.position(deg);
+  if (turnSharpness < 0)
+  {
+    startPos = right1.position(deg);
+  }
+
+  //records a starting position of the bot
+  double startAng = Inertial.rotation(deg);
+  int startTime = vex::timer::system();
+  //limits the time the procedure can run
+  while (vex::timer::system() - startTime < timelim * 1000) {
+    //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
+    double speed = (dist - (left1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
+    if (turnSharpness < 0)
+    {
+      speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3;
+    }
+    // explain here
+    double turnErr = startAng - Inertial.rotation(deg);
+    if (turnSharpness == 0){
+      rightdrive.spin(fwd, speed-turnErr, pct);
+      leftdrive.spin(fwd, speed+turnErr, pct);
+    }
+    if (100>turnSharpness > 0){
+      rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
+      leftdrive.spin(fwd, speed, pct);
+    }
+    if (turnSharpness >100){
+      rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
+      leftdrive.spin(fwd, -speed, pct);
+    }
+    if (-100 < turnSharpness < 0){
+      rightdrive.spin(fwd, speed, pct);
+      leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
+    }
+    if (turnSharpness< -100){
+      rightdrive.spin(fwd, -speed, pct);
+      leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
+    }
+    wait(5, msec);
+  }
+  allmotors.stop();
+}
+
+
 
 void lineDriveAbsolute (double dist, double timelim, double targetAngle){
   //establishes when we started the procedure
@@ -98,136 +161,28 @@ void lineDriveAbsolute (double dist, double timelim, double targetAngle){
  }
 }
 
-
-void defense () {
-  //opens wing to remove ball in the corner
-  //rightwing.open();
-  //drives towards the wall to remove the tri ball
-  lineDrive(-20,1.5);
-  // closes the wings to prevent damages to the wings
-  // turns to face the goal
-  gyroTurn(30,2);
-  //rightwing.close();
-  //drives match load into the goal
-  lineDrive(-20,1);
-  lineDrive(10,1);
-  gyroTurn(0, 2);
-  lineDrive(40,1);
-  gyroTurn(-50,1);
-  lineDrive(50,1.5);
-  allmotors.stop();
-  // // turns to touch the elevation pole
-  // gyroTurn(-15,2);
-  // //drives to the pole
-  // lineDrive(10,2);
-  // // turns to the pole 
-  // gyroTurn(-45,2);
-  // // touches the pole
-  // lineDrive(30,2);
-  // // stops everything
-  // allmotors.stop();
-}
-void fourball(){
-  rightwing.open();
-  intake.spin(fwd,-15,pct);
-  wait(.4,sec);
-  rightwing.close();
-  lineDrive(10,1);
-  gyroTurn(-30,1);
-  intake.spin(fwd,-100,pct);
-  lineDrive(100,.6);
+void wooshDefense(){
+  Punchything.spin(fwd,100,pct);
+  leftwing.open();
+  intake.spin(fwd,100,pct);
+  lineDrive(50, 2);
+  leftwing.close();
+  Punchything.stop(coast);
   lineDrive(-15,1);
-  gyroTurn(-135,.7);
-  intake.spin(fwd,100,pct);
-  lineDrive(62,1.3);
-  gyroTurn(160-185,1.2);
-  lineDrive(32,1.5);
-  gyroTurn(250+175,.7);
+  gyroTurn(45,1);
   intake.spin(fwd,-100,pct);
-  wait(.45,sec);
-  lineDrive(1000,.6);
-  intake.spin(fwd,100,pct);
-  lineDrive(-20,1);
-  gyroTurn(70+165,.6);
-  lineDrive(25,1);
-  gyroTurn(250+165,1.2);
-  intake.spin(fwd,-100,pct);
-  lineDrive(1000,.75);
-  lineDrive(-10,1);
-  allmotors.stop();
-
-}
-void qualsoffense () {
-  // opens the wing to remove the tri ball
-  //drives to remove the tri ball
-  lineDrive(-35,3);
-  gyroTurn(-30,1);
-  lineDrive(-15,.5);
-  lineDrive(10,.75);
-  gyroTurn(0,1.5);
-  lineDrive(35,2);
-  gyroTurn(63,2);
-  lineDrive(50,2);
-  allmotors.stop();
-  //closes the wing to prevent damaging the robot
-  //turns to face the goal
-  // gyroTurn(40,2);
-  // //scores the matchload triball
-  // lineDrive(40,2);
-  // //turns to face the elevation pole
-  // gyroTurn(10,2);
-  // //drives closer to the elevation pole
-  // lineDrive(30,2);
-  // //turns to be in line with the pole
-  // gyroTurn(45,1);
-  // intake.spin(fwd,-15,pct);
-  // //touches the pole
-  // lineDrive(30,2);
-  // //stops all motors
-  // allmotors.stop();
-}
-void elimoffense(){
-  lineDrive(-100,.8);
-  gyroTurn(-30,.4);
-  lineDrive(20,.75);
-  gyroTurn(80,1);
-  lineDrive(50,2);
-  intake.spin(fwd,-15,pct);
-  gyroTurn(160,1);
-  intake.spin(fwd,100,pct);
-  lineDrive(32,1.5);
-  gyroTurn(250,1);
-  intake.spin(fwd,-100,pct);
-  wait(.4,sec);
   lineDrive(30,1);
-  intake.spin(fwd,100,pct);
-  lineDrive(-30,1.5);
-  gyroTurn(60,1);
-  lineDrive(15,.5);
-  gyroTurn(250,1);
-  intake.spin(fwd,-100,pct);
-  lineDrive(1000,1);
-  lineDrive(-10,1);
-  allmotors.stop();
-}
-void finalsdefense(){
-  //opens wing to remove ball in the corner
+  swing(155, 15, 2);
+  gyroTurn(80,1);
+  swing(-130,40,2);
+  lineDrive(10,1.5);
+  gyroTurn(-60,1);
   rightwing.open();
-  //drives towards the wall to remove the tri ball
-  lineDrive(-20,1.5);
-  // closes the wings to prevent damages to the wings
-  // turns to face the goal
-  gyroTurn(30,2);
-  rightwing.close();
-  //drives match load into the goal
-  lineDrive(-20,1);
-  lineDrive(10,1);
-  gyroTurn(-45,1);
-  lineDrive(60,2);
+  lineDrive(50,2);
 }
 
 void autonomous () {
-  defense();
+  wooshDefense();
 }
 
 void usercontrol () {
@@ -298,6 +253,29 @@ void usercontrol () {
     else{
       f2loop=true;
     }
+    if (con.ButtonX.pressing()){
+      if (f4loop){
+        Shoottogg = !Shoottogg;
+      }
+      if (Shoottogg && f4loop){
+        uppy1.open();
+        // uppy2.open();
+        // uppy3.open();
+        // uppy4.open();
+        f4loop=false;
+      }
+      if (!Shoottogg && f4loop){
+        uppy1.close();
+        // uppy2.close();
+        // uppy3.close();
+        // uppy4.close();
+        // f4loop=false;
+        f4loop=false;
+      }
+    }
+    else {
+      f4loop = true;
+    }
     //toggles both wings on or off
     if (con.ButtonR2.pressing()){
       if (f3loop) {
@@ -320,7 +298,7 @@ void usercontrol () {
         
 
 
-    if (con.ButtonB.pressing()){
+    if (con.ButtonR1.pressing()){
       Punchything.spin(fwd,100,pct);
     }
     else {
