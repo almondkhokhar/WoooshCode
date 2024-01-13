@@ -26,6 +26,8 @@ bool f2loop = true;
 bool f3loop = true;
 bool f4loop = true;
 int counter = 0;
+double speedMultiplier=3.9;
+double turnMultiplier= .2;
 using namespace vex;
 // defines motor groups and abstracts the motors into simpler components
 competition Competition;
@@ -47,11 +49,16 @@ void gyroTurn (float target, float timeout) {
   int startTime = vex::timer::system();
   // limits the time so that it doesn't waste time fixing marginal error
   while (vex::timer::system() - startTime < timeout * 1000) {
+    while (target- Inertial.rotation(deg)>2){
     //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    float speed = (target - Inertial.rotation(deg)) * .2;
+    float speed = (target - Inertial.rotation(deg)) * .4;
     rightdrive.spin(fwd, -speed, pct);
     leftdrive.spin(fwd, speed, pct);
+    break;
+    }
+    wait(5,msec);
   }
+
   //stops slowly opposed to abruptly
   leftdrive.stop();
   rightdrive.stop();
@@ -63,21 +70,21 @@ void lineDrive (float dist, float timelim){
   //establishes when we started the procedure
   //records a starting position of the bot
   double  startPos = right1.position(deg);
-
   //records a starting position of the bot
   double startAng = Inertial.rotation(deg);
   int startTime = vex::timer::system();
   //limits the time the procedure can run
   while (vex::timer::system() - startTime < timelim * 1000) {
-     while (1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (right1.position(deg)-startPos)*3.14159/180*3.25<-1){
+     while ((1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (right1.position(deg)-startPos)*3.14159/180*3.25<-1)){
         //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-        double  speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
+        int  speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * speedMultiplier;
         // explain here
         double turnErr = startAng - Inertial.rotation(deg);
         rightdrive.spin(fwd, speed-turnErr, pct);
         leftdrive.spin(fwd, speed+turnErr, pct);
-        wait(5, msec);
+        break;
      }
+    wait(5, msec);
   }
   leftdrive.stop();
   rightdrive.stop();
@@ -95,61 +102,136 @@ void backup(){
  * @param dist 
  * @param timelim 
  */
-void swing (float turnSharpness,float dist, float timelim){
-  //establishes when we started the procedure
-  //records a starting position of the bot
-  double startPos = left1.position(deg);
-  if (turnSharpness < 0)
-  {
-    startPos = right1.position(deg);
-  }
+// void swing (float turnSharpness,float dist, float timelim){
+//   //establishes when we started the procedure
+//   //records a starting position of the bot
+//   double startPos = left1.position(deg);
+//   double speed = 0;
 
-  //records a starting position of the bot
-  double startAng = Inertial.rotation(deg);
-  int startTime = vex::timer::system();
-  //limits the time the procedure can run
+//   if (turnSharpness < 0)
+//   {
+//     startPos = right1.position(deg);
+//   }
+
+//   int startTime = vex::timer::system();
+//   //limits the time the procedure can run
 
   
 
-  while (vex::timer::system() - startTime < timelim * 1000) {
-    while (1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (right1.position(deg)-startPos)*3.14159/180*3.25<-1){
+//   while (vex::timer::system() - startTime < timelim * 1000) {
+//     while (1<dist - (right1.position(deg)-startPos)*3.14159/180*3.25 or dist - (left1.position(deg)-startPos)*3.14159/180*3.25<-1){
 
-      //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-      double speed = (dist - (left1.position(deg)-startPos)*3.14159/180*3.25) * 3.9;
-      if (turnSharpness < 0)
-      {
-        speed = (dist - (right1.position(deg)-startPos)*3.14159/180*3.25) * 3;
-      }
-      // explain here
-      double turnErr = startAng - Inertial.rotation(deg);
-      if (turnSharpness == 0){
-        rightdrive.spin(fwd, speed-turnErr, pct);
-        leftdrive.spin(fwd, speed+turnErr, pct);
-      }
-      if (100>turnSharpness > 0){
+//       //limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
+//       if (turnSharpness<0){
+//         speed = (dist - (abs(left1.position(deg)-startPos)*3.14159/180*3.25)) * 3;
+//       }
+//       if (turnSharpness > 0)
+//       {
+//         speed = (dist - (abs(right1.position(deg)-startPos)*3.14159/180*3.25)) * 3;
+//       }
+//       // explain here
+//       if (100 > turnSharpness && turnSharpness > 0){
+//         rightdrive.spin(fwd, -speed * ((100 - turnSharpness) / 100), pct);
+//         leftdrive.spin(fwd, -speed, pct);
+//       }
+//       if (turnSharpness >100){
+//         rightdrive.spin(fwd, -speed * ((100 - turnSharpness) / 100), pct);
+//         leftdrive.spin(fwd, speed, pct);
+//       }
+//       if (-100 < turnSharpness && turnSharpness< 0){
+//         rightdrive.spin(fwd, -speed, pct);
+//         leftdrive.spin(fwd, -speed * ((100 + turnSharpness) / 100), pct);
+//       }
+//       if (turnSharpness< -100){
+//         rightdrive.spin(fwd, -speed, pct);
+//         leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
+//       }
+//       wait(5, msec);
+//       break;
+//     }
+//   }
+//   rightdrive.stop();
+//   leftdrive.stop();
+// }
+
+void swing (float targetAngle, float dist, float timelim, bool rl, double turnSharpness)
+{
+  //variables
+  double speed = 0;
+  double yetTurn = targetAngle - Inertial.rotation(deg);
+  double leftStartPos = left1.position(deg);
+  double rightStartPos = right1.position(deg);
+  int startTime = vex::timer::system();
+  if (rl){
+      speed = (dist - ((left1.position(deg)-leftStartPos)*3.14159/180*3.25)) * speedMultiplier;
+    }
+    else {
+      speed = (dist - ((right1.position(deg)-rightStartPos)*3.14159/180*3.25)) * speedMultiplier;
+    }
+
+  while (vex::timer::system() - startTime < timelim * 1000) {
+    while (abs(speed) > 3){
+      if (targetAngle - Inertial.rotation(deg)>1){
         rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
         leftdrive.spin(fwd, speed, pct);
       }
-      if (turnSharpness >100){
-        rightdrive.spin(fwd, speed * ((100 - turnSharpness) / 100), pct);
-        leftdrive.spin(fwd, -speed, pct);
+      else{
+        lineDrive(dist - (left1.position(deg)-leftStartPos),timelim*1000-(vex::timer::system()-startTime));
       }
-      if (-100 < turnSharpness < 0){
-        rightdrive.spin(fwd, speed, pct);
-        leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
-      }
-      if (turnSharpness< -100){
-        rightdrive.spin(fwd, -speed, pct);
-        leftdrive.spin(fwd, speed * ((100 + turnSharpness) / 100), pct);
-      }
-      wait(5, msec);
+
     }
   }
-  rightdrive.stop();
   leftdrive.stop();
+  rightdrive.stop();
 }
 
 
+void newSwing (float targetAngle, float targetDistance, float timelim) 
+{
+  double startPos = 10;
+  double distanceError = 10;
+  double currentTargetAngle = 10;
+  double speed = 10;
+  double correctionFactor = 0;
+  int startTime = vex::timer::system();
+  if (targetDistance > 0){
+  double startPos =  left1.position(deg);
+  }
+  if (targetDistance < 0){
+    double startPos =  right1.position(deg);
+  }
+  double startingAngle = Inertial.rotation(deg);
+  while (vex::timer::system() - startTime < timelim * 1000) {
+    while (distanceError>1){
+      double distanceError = targetDistance - ((left1.position(deg)-startPos)*3.14159/180*3.25);
+      speed = distanceError * speedMultiplier;
+      double currentTargetAngle = (startingAngle + ((targetDistance - distanceError) / targetDistance) * targetAngle);
+      correctionFactor = currentTargetAngle;
+      rightdrive.spin(fwd, speed+correctionFactor*.9,pct);
+      leftdrive.spin(fwd,speed-correctionFactor*.9,pct);
+      break;
+    }
+    wait(5,msec);
+  }
+    rightdrive.stop();
+    leftdrive.stop();
+}
+/* void swing (targetAngle, targetDistance)
+// targetAngle +90
+// tragetDist +10
+
+double currentTragetAngle = 0;
+while()
+{
+  speed = distanceError
+
+  currentTargetAngle = (startingAngle + ((targetdistance - distanceError) / targetdistance) * targetAngle)'w
+  TurnError = currentTargetAngle - currentRealAngle;
+  correctionFadctor = Kp * turnError
+  right.spin(speed+correction)
+  ledt.spin(speed-correction)
+}
+*/
 
 
 
@@ -178,21 +260,36 @@ void wooshDefense(){
   lineDrive(50, 2);
   leftwing.close();
   Punchything.stop(coast);
-  lineDrive(-15,1);
-  gyroTurn(45,1);
+  lineDrive(-20,1);
+  gyroTurn(28,1);
   intake.spin(fwd,-100,pct);
   lineDrive(30,1);
-  swing(155, 15, 2);
-  gyroTurn(80,1);
-  swing(-130,40,2);
-  lineDrive(10,1.5);
-  gyroTurn(-60,1);
-  rightwing.open();
-  lineDrive(50,2);
+  lineDrive(-10,1);
+  gyroTurn(55,1);
+  lineDrive(50,1);
+  gyroTurn(85,2);
+  lineDrive(-20,1);
+  gyroTurn(23,1);
+  lineDrive(-50,1);
+  lineDrive(15,.7);
+  gyroTurn(324,1);
+  uppy1.open();
+  lineDrive(15,1);
+  gyroTurn(5,1);
+  lineDrive(50,1.2);
+  // lineDrive(10,1.5);
+  // gyroTurn(-60,1);
+  // rightwing.open();
+  // lineDrive(50,2);
 }
+void Carsonisanidiot (){
+  
+  gyroTurn(15,1);
+  uppy1.open();
 
+}
 void autonomous () {
-  wooshDefense();
+  Carsonisanidiot();
 }
 
 void usercontrol () {

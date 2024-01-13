@@ -14,11 +14,11 @@ motor Punchything = motor(PORT7, true);
 motor intake = motor(PORT17, false);
 pneumatics rightwing = pneumatics(Brain.ThreeWirePort.A);
 pneumatics leftwing = pneumatics(Brain.ThreeWirePort.H);
-pneumatics uppy1 = pneumatics(Brain.ThreeWirePort.G);
+pneumatics uppy1 = pneumatics(Brain.ThreeWirePort.B);
 pneumatics uppy2 = pneumatics(Brain.ThreeWirePort.C);
 pneumatics uppy3 = pneumatics(Brain.ThreeWirePort.G);
-pneumatics uppy4 = pneumatics(Brain.ThreeWirePort.B);
-inertial Inertial = inertial(PORT16);
+pneumatics uppy4 = pneumatics(Brain.ThreeWirePort.F);
+inertial Inertial = inertial(PORT6);
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  *
