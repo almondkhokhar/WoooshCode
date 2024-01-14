@@ -18,7 +18,7 @@ extern motor intake;
 extern motor Punchything;
 extern pneumatics leftwing;
 extern pneumatics rightwing;
-extern pneumatics uppy1;
+extern pneumatics dropDown;
 extern pneumatics uppy2;
 extern pneumatics uppy3;
 extern pneumatics uppy4;
