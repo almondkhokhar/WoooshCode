@@ -1,4 +1,8 @@
+#ifndef ROBOTCONFIG_H
+#define ROBOTCONFIG_H
+#include"vex.h"
 using namespace vex;
+
 void vexcodeInit(void);
 
 /**
@@ -15,12 +19,16 @@ extern motor right1;
 extern motor right2;
 extern motor right3;
 extern motor intake;
-extern motor Punchything;
+extern motor kicker;
 extern pneumatics leftwing;
 extern pneumatics rightwing;
 extern pneumatics dropDown;
-extern pneumatics uppy2;
-extern pneumatics uppy3;
-extern pneumatics uppy4;
+extern pneumatics lift;
+
+extern motor_group leftdrive;
+extern motor_group rightdrive;
 extern inertial Inertial;
-extern rotation Catarotate;
+extern motor_group allmotors;
+extern drivetrainObj Drive;
+
+#endif

@@ -10,15 +10,18 @@ motor right3 = motor(PORT9,false);
 motor left1 = motor(PORT18,true);
 motor left2 = motor(PORT19, true);
 motor left3 = motor(PORT20, true);
-motor Punchything = motor(PORT7, true);
+motor kicker = motor(PORT7, true);
 motor intake = motor(PORT17, false);
 pneumatics rightwing = pneumatics(Brain.ThreeWirePort.A);
 pneumatics leftwing = pneumatics(Brain.ThreeWirePort.H);
 pneumatics dropDown = pneumatics(Brain.ThreeWirePort.B);
-pneumatics uppy2 = pneumatics(Brain.ThreeWirePort.C);
-pneumatics uppy3 = pneumatics(Brain.ThreeWirePort.G);
-pneumatics uppy4 = pneumatics(Brain.ThreeWirePort.F);
+pneumatics lift = pneumatics(Brain.ThreeWirePort.G);
+
+motor_group leftdrive(left1, left2, left3);
+motor_group rightdrive(right1, right2, right3);
 inertial Inertial = inertial(PORT6);
+motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, kicker);
+drivetrainObj Drive(2.75, 0.75);
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  *

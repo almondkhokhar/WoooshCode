@@ -11,7 +11,27 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+
 // initializes variables
+class Drive{
+  public:
+    double wheelRatio;
+    double gearRatio;
+    double kp;
+    double kd;
+    double initialAngle;
+    double finalAngle;
+    double totalError;
+    double currentError;
+    double finalDistance;
+    double currentDistance;
+    double turningDistance;
+    double turnTimeout;
+    double totalTimeout;
+    double firstDriveTimeout;
+    double secondDriveTimeout;
+
+};
 bool conToggle1 = true;
 bool conToggle2 = true;
 bool conToggle3 = true;
@@ -36,205 +56,202 @@ int counter = 0;
 using namespace vex;
 // defines motor groups and abstracts the motors into simpler components
 competition Competition;
-motor_group leftdrive(left1, left2, left3);
-motor_group rightdrive(right1, right2, right3);
-motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, Punchything);
+int autoSelect = 0;
 
-void gyroTurn(double target, double timeout, bool rightTurn)
+
+void pre_auton(void)
 {
-  // establishes when the turn started
-  int startTime = vex::timer::system();
-  // limits the time so that it doesn't waste time fixing marginal error
-  double speed;
-  while (vex::timer::system() - startTime < timeout * 1000)
+  Inertial.calibrate();
+  wait(3, sec);
+  Brain.Screen.print("Ready");
+  bool firstTouch = true;
+  while (!Competition.isDriverControl())
   {
-    // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed = (target - Inertial.rotation(deg)) * .4;
-    if (rightTurn)
+    if (Brain.Screen.pressing())
     {
-      rightdrive.spin(fwd, -speed, pct);
-      leftdrive.spin(fwd, speed, pct);
+      if (firstTouch)
+      {
+        firstTouch = false;
+        autoSelect = (autoSelect + 1) % 8;
+      }
     }
     else
     {
-      rightdrive.spin(fwd, speed, pct);
-      leftdrive.spin(fwd, -speed, pct);
+      firstTouch = true;
     }
-    wait(10, msec);
   }
-  // stops slowly opposed to abruptly
-  leftdrive.stop();
-  rightdrive.stop();
-}
-
-void lineDrive(double targetDistance, double timeout)
-{
-  double distKp = 3.9;
-  // establishes when we started the procedure
-  // records a starting position of the bot
-  double startPos = right1.position(deg);
-  // records a starting position of the bot
-  double startAng = Inertial.rotation(deg);
-  int startTime = vex::timer::system();
-  // limits the time the procedure can run
-  double speed, turnErr;
-  while (vex::timer::system() - startTime < timeout * 1000)
-  {
-    // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed = (targetDistance - (right1.position(deg) - startPos) * 3.14159 / 180 * 3.25) * distKp;
-    // calculates the difference between our current angle and our initial angle
-    turnErr = startAng - Inertial.rotation(deg);
-    // set the drive to the correct speed
-    rightdrive.spin(fwd, speed - turnErr, pct);
-    leftdrive.spin(fwd, speed + turnErr, pct);
-    wait(10, msec);
-  }
-  leftdrive.stop();
-  rightdrive.stop();
 }
 
 void backup()
 {
-  lineDrive(-100, 2);
-  lineDrive(10, 1);
-}
-
-void swing(double targetAngle, double targetDistance, double timeout, bool rightTurn)
-{
-  // variables
-  double turnKp = 1;
-  double distKp = 3.9;
-  double speed, fractionOfDriveCompleted, distanceTraveled, currentTargetAngle, turnErr;
-  double leftStartPos = left1.position(deg);
-  double rightStartPos = right1.position(deg);
-  double startAngle = Inertial.rotation(deg);
-  int startTime = vex::timer::system();
-  while (vex::timer::system() - startTime < timeout * 1000)
-  {
-    if (rightTurn)
-    {
-      distanceTraveled = ((left1.position(deg) - leftStartPos) * 3.14159 / 180 * 3.25);
-    }
-    else
-    {
-      distanceTraveled = ((right1.position(deg) - rightStartPos) * 3.14159 / 180 * 3.25);
-    }
-    // find the desired speed based on distance
-    speed = (targetDistance - distanceTraveled) * distKp;
-    // find percentage of distance driven
-    fractionOfDriveCompleted = distanceTraveled / targetDistance;
-    // calculate the angle the robot should be at based on percent driven
-    currentTargetAngle = startAngle + fractionOfDriveCompleted * targetAngle;
-    // find the error of the robots angle
-    turnErr = (currentTargetAngle - Inertial.rotation(deg)) * turnKp;
-
-    rightdrive.spin(fwd, speed - turnErr, pct);
-    leftdrive.spin(fwd, speed + turnErr, pct);
-    wait(20, msec);
-  }
-  leftdrive.stop();
-  rightdrive.stop();
+  Drive.move(-100, 2);
+  Drive.move(10, 1);
 }
 
 void wooshDefense()
 {
   intake.spin(fwd, -100, pct);
-  lineDrive(-40, 1);
-  lineDrive(10, 1);
-  gyroTurn(10, 1, false);
+  Drive.move(-40, 1);
+  Drive.move(10, 1);
+  Drive.turn(10, 1);
   dropDown.open();
-  lineDrive(24, 1);
-  gyroTurn(18, 1, false);
+  Drive.move(24, 1);
+  Drive.turn(18, 1);
   dropDown.close();
-  lineDrive(45, 1);
+  Drive.move(45, 1);
 }
+
 void agroDefense()
 {
-  Punchything.spin(fwd, 100, pct);
-  intake.spin(fwd, 100, pct);
-  leftwing.open();
-  lineDrive(52.5, 1.7);
-  Punchything.stop();
-  lineDrive(-16, .75);
-  gyroTurn(20, 1, true);
-  intake.spin(fwd, -100, pct);
-  lineDrive(40, 1);
-  leftwing.close();
-  lineDrive(-15, .75);
-  gyroTurn(40, 1, true);
-  lineDrive(54, 1.7);
-  gyroTurn(20, 1, false);
-  lineDrive(-55, 1);
-  lineDrive(17, 1);
-  gyroTurn(10, 1, false);
+  kicker.spin(fwd,100,pct);
   dropDown.open();
-  lineDrive(25, 1);
+  Drive.move(5,.3);
+  dropDown.close();
+  Drive.turn(-49,1.2);
+  kicker.stop();
+  intake.spin(fwd,100,pct);
+  Drive.move(56,2);
+  Drive.turn(-9,1);
+  Drive.move(-50,1.5);
+  Drive.turn(70,1);
   intake.spin(fwd,-100,pct);
-  gyroTurn(22.5, 1, false);
-   dropDown.close();
-   lineDrive(40,1.1);
+  wait(.3,sec);
+  Drive.move(-23,1);
+  Drive.turn(40,1);
+  dropDown.open();
+  Drive.turn(50,1);
+  wait(.2,sec);
+  dropDown.close();
+  Drive.turn(-60,1);
+  rightwing.open();
+  Drive.move(25,1);
+  Drive.turn(-40,1);
+  Drive.move(39,1.4);
+  rightwing.close();
+  // kicker.spin(fwd, 100, pct);
+  // intake.spin(fwd, 100, pct);
+  // leftwing.open();
+  // Drive.move(53, 1.75);
+  // wait(.3,sec);
+  // kicker.stop();
+  // leftwing.close();
+  // Drive.move(-55, 1.75);
+  // Drive.turn(60, 1);
+  // intake.spin(fwd,-100,pct);
+  // wait(.5,sec);
+  // Drive.turn(15,1);
+  // Drive.move(-29,1.45);
+  // Drive.turn(37,1);
+  // Drive.move(-12.5,1);
+  // Drive.move(18,1);
+  // Drive.turn(-27 ,1);
+  // dropDown.open();
+  // Drive.move(18,1);
+  // Drive.turn(-33,1);
+  // dropDown.close();
+  // rightwing.open();
+  // Drive.move(39,1.2);
+  // rightwing.close();
+  
 }
+
 void skills(){
-  uppy3.open();
-  Punchything.spin(fwd,100,pct);
+  lift.open();
+  kicker.spin(fwd,100,pct);
   intake.spin(fwd,-100,pct);
   wait(45,sec);
-  uppy3.close();
+  lift.close();
   wait(2,sec);
-  Punchything.stop();
-  gyroTurn(17,1,true);
-  lineDrive(90,3);
-  gyroTurn(19,1,false);
+  kicker.stop();
+  Drive.turn(17,1);
+  Drive.move(90,3);
+  Drive.turn(19,1);
   rightwing.open();
   leftwing.open();
-  lineDrive(70,3);
-  lineDrive(-15,1.5);
+  Drive.move(70,3);
+  Drive.move(-15,1.5);
+}
+
+void sixball() {
+  intake.spin(fwd,100,pct);
+  lift.open();
+  wait(.2,sec);
+  lift.close();
+  dropDown.open();
+  wait(.3,sec);
+  Drive.move(-36.5,1.3);
+  dropDown.close();
+  Drive.turn(170,1);
+  leftwing.open();
+  Drive.move(8,.3);
+  rightwing.open();
+  Drive.move(15,1);
+  intake.spin(fwd,-100,pct);
+  Drive.turn(97,1);
+  Drive.move(1000,.6);
+  Drive.move(-6,.5);
+  Drive.move(1000,.6);
+  rightwing.close();
+  leftwing.close();
+  Drive.move(-10,.5);
+  Drive.turn(15,1);
+  intake.spin(fwd,100,pct);
+  Drive.move(55,1.3);
+  Drive.turn(130,1);
+  intake.spin(fwd,-80,pct);
+  Drive.turn(90,1);
+  intake.spin(fwd,100,pct);
+  Drive.move(30,1.5);
+  Drive.turn(180,1);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.move(100,1);
+  Drive.move(-100,1);
+
+  // intake.spin(fwd,-100,pct);
+  // dropDown.close();
+  // Drive.turn(-30,1);
+
 }
 
 void agroOffense(){
   dropDown.open();
-  lineDrive(13,1);
-  gyroTurn(15,1,false);
+  Drive.move(13,1);
+  Drive.turn(-15,1);
   dropDown.close();
   intake.spin(fwd,-100,pct);
-  lineDrive(60,.75);
-  lineDrive(-13,.5);
-  gyroTurn(23.5,1,false);
+  Drive.move(60,.75);
+  Drive.move(-13,.5);
+  Drive.turn(-73.5,1);
   intake.spin(fwd,100,pct);
-  lineDrive(58,1.5);
-  gyroTurn(31,1,true);
-  lineDrive(17,.8);
-  gyroTurn(24,1,true);
+  Drive.move(58,1.5);
+  Drive.turn(31,1);
+  Drive.move(17,.8);
+  Drive.turn(24,1);
   leftwing.open();
   intake.spin(fwd,-100,pct);
-  lineDrive(50,1);
+  Drive.move(50,1);
   leftwing.close();
-  lineDrive(-20,.8);
+  Drive.move(-20,.8);
   intake.spin(fwd,100,pct);
-  gyroTurn(50,1,false);
-  lineDrive(17,.8);
-  lineDrive(-30,1);
-  gyroTurn(50,1,true);
+  Drive.turn(50,1);
+  Drive.move(17,.8);
+  Drive.move(-30,1);
+  Drive.turn(50,1);
   intake.spin(fwd,-100,pct);
-  lineDrive(30,1);
-
-
-
-
-
+  Drive.move(30,1);
 }
-void pre_auton(void)
+
+void (*autonsList[])()=
 {
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-  Inertial.calibrate();
-  wait(3, sec);
-  Brain.Screen.print("Ready");
-}
+  sixball,
+  wooshDefense
+};
 
 void autonomous()
 {
-  agroOffense();
+  autonsList[autoSelect]();
 }
 
 
@@ -333,17 +350,17 @@ void usercontrol()
       }
       if (Shoottogg && f4loop)
       {
-        uppy3.open();
+        lift.open();
         // uppy2.open();
-        // uppy3.open();
+        // lift.open();
         // uppy4.open();
         f4loop = false;
       }
       if (!Shoottogg && f4loop)
       {
-        uppy3.close();
+        lift.close();
         // uppy2.close();
-        // uppy3.close();
+        // lift.close();
         // uppy4.close();
         // f4loop=false;
         f4loop = false;
@@ -384,11 +401,11 @@ void usercontrol()
         punchythingToggle=!punchythingToggle;
       }
       if (punchythingToggle && f5loop){
-        Punchything.spin(fwd,100,pct);
+        kicker.spin(fwd,100,pct);
         f5loop=false;
       }
       if (!punchythingToggle && f5loop){
-        Punchything.stop();
+        kicker.stop();
         f5loop=false;
       }
 
@@ -417,6 +434,7 @@ void usercontrol()
 
 int main()
 {
+  vexcodeInit();
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();
