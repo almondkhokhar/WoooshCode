@@ -59,7 +59,7 @@ void drivetrainObj::turn(double targetAngle, double timeout)
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed = (targetAngle - Inertial.rotation(deg)) * .2;
+    speed = (targetAngle - Inertial.rotation(deg)) * .19;
     rightdrive.spin(fwd, -speed, pct);
     leftdrive.spin(fwd, speed, pct);
     wait(10, msec);
