@@ -107,26 +107,29 @@ void agroDefense()
   dropDown.open();
   Drive.move(5,.3);
   dropDown.close();
-  Drive.turn(-49,1.2);
+  Drive.turn(-74,1.2);
   kicker.stop();
   intake.spin(fwd,100,pct);
-  Drive.move(56,2);
-  Drive.turn(-9,1);
-  Drive.move(-50,1.5);
+  Drive.move(52,1.5);
+  Drive.turn(-72,1);
+  Drive.move(-48,1.5);
   Drive.turn(70,1);
   intake.spin(fwd,-100,pct);
   wait(.3,sec);
-  Drive.move(-23,1);
-  Drive.turn(40,.8);
   dropDown.open();
-  Drive.turn(50,.8);
-  wait(.2,sec);
+  Drive.move(-14,1);
+  Drive.turn(110,.8);
+  Drive.move(-6,1);
   dropDown.close();
-  Drive.turn(-60,1);
+  wait(.2,sec);
+  Drive.move(6,1);
+  Drive.turn(40,1);
   rightwing.open();
-  Drive.move(25,1);
-  Drive.turn(-40,1);
-  Drive.move(39,1.4);
+  leftwing.open();
+  Drive.move(20,1);
+  Drive.turn(5,1);
+  intake.spin(fwd,-100,pct);
+  Drive.move(35,1.4);
   rightwing.close();
   // kicker.spin(fwd, 100, pct);
   // intake.spin(fwd, 100, pct);
@@ -201,36 +204,25 @@ void sixball() {
   wait(.2,sec);
   lift.close();
   wait(.3,sec);
-  Drive.move(-37,.9);
+  Drive.move(-38,1.1);
   Drive.turn(155,1);
   dropDown.open();
   Drive.move(24,.9);
   Drive.turn(90,.8);
   dropDown.close();
   intake.spin(fwd,-100,pct);
-  wait(.3,sec);
+  wait(.4,sec);
   rightwing.open();
   Drive.move(1000,.5);
-  Drive.move(-15,.8);
+  Drive.move(-15,.7);
   rightwing.close();
-  Drive.turn(8,1);
+  Drive.turn(8,.9);
   intake.spin(fwd,100,pct);
-  Drive.move(54,1.3);
-  Drive.turn(103,.6);
-  Drive.move(20,.7);
+  Drive.move(55,1.2);
   leftwing.open();
   rightwing.open();
-  Drive.turn(200,.8);
+  Drive.turn(160,.7);
   intake.spin(fwd,-100,pct);
-  Drive.move(1000,.8);
-  Drive.move(-10,.7);
-  Drive.turn(-20,1);
-  intake.spin(fwd,100,pct);
-  Drive.move(22,.9);
-  Drive.turn(0,.8);
-  Drive.move(1000,.7);
-  Drive.move(-10000,.5);
-
 
 }
 
@@ -264,6 +256,7 @@ void agroOffense(){
 
 void (*autonsList[])()=
 {
+  agroDefense,
   sixball,
   skills,
   wooshDefense,
