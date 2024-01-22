@@ -112,50 +112,6 @@ void agroDefense()
   kicker.stop();
   intake.spin(fwd,-100,pct);
   Drive.move(40,1.5);
-  // Drive.turn(-72,1);
-  // Drive.move(-48,1.5);
-  // Drive.turn(70,1);
-  // intake.spin(fwd,-100,pct);
-  // wait(.3,sec);
-  // dropDown.open();
-  // Drive.move(-14,1);
-  // Drive.turn(110,.8);
-  // Drive.move(-6,1);
-  // dropDown.close();
-  // wait(.2,sec);
-  // Drive.move(6,1);
-  // Drive.turn(40,1);
-  // rightwing.open();
-  // leftwing.open();
-  // Drive.move(20,1);
-  // Drive.turn(5,1);
-  // intake.spin(fwd,-100,pct);
-  // Drive.move(35,1.4);
-  // rightwing.close();
-  // kicker.spin(fwd, 100, pct);
-  // intake.spin(fwd, 100, pct);
-  // leftwing.open();
-  // Drive.move(53, 1.75);
-  // wait(.3,sec);
-  // kicker.stop();
-  // leftwing.close();
-  // Drive.move(-55, 1.75);
-  // Drive.turn(60, 1);
-  // intake.spin(fwd,-100,pct);
-  // wait(.5,sec);
-  // Drive.turn(15,1);
-  // Drive.move(-29,1.45);
-  // Drive.turn(37,1);
-  // Drive.move(-12.5,1);
-  // Drive.move(18,1);
-  // Drive.turn(-27 ,1);
-  // dropDown.open();
-  // Drive.move(18,1);
-  // Drive.turn(-33,1);
-  // dropDown.close();
-  // rightwing.open();
-  // Drive.move(39,1.2);
-  // rightwing.close();
   
 }
 
@@ -171,10 +127,10 @@ void skills(){
   kicker.stop();
   Drive.turn(offset+40,.8);
   Drive.move(100,2.3);
-  Drive.turn(offset+-145,.7);
+  Drive.turn(offset+-150,.7);
   leftwing.close();
   rightwing.close();
-  Drive.move(60,1.5);
+  Drive.move(65,1.5);
   Drive.turn(offset+45,1);
   rightwing.open();
   wait(.3,sec);
@@ -189,14 +145,23 @@ void skills(){
   rightwing.open();
   wait(.3,sec);
   Drive.move(10000,1);
-  Drive.move(-30,1);
-  Drive.move(1000,1);
-  Drive.move(-30,1);
-  Drive.turn(offset+-55,.7);
+  Drive.move(-40,1);
   rightwing.close();
   leftwing.close();
-  Drive.move(63,1.5);
-  Drive.turn(offset+-100,1);
+  Drive.turn(130,1);
+  Drive.move(10,1);
+  Drive.turn(40,1);
+  rightwing.open();
+  leftwing.open();
+  Drive.move(1000,1);
+  Drive.move(-30,1);
+  Drive.turn(offset+-70,.7);
+  rightwing.close();
+  leftwing.close();
+  Drive.move(75,1.5);
+  Drive.turn(offset+-150,1);
+  Drive.move(-25,1);
+  Drive.turn(-70,1);
   Drive.move(-100,1);
   Drive.move(10,.7);
   Drive.move(-100,1);
@@ -275,8 +240,8 @@ void agroOffense(){
 
 void (*autonsList[])()=
 {
-  agroDefense,
   skills,
+  agroDefense,
   sixball,
   wooshDefense,
 };
