@@ -130,7 +130,7 @@ void skills(){
   Drive.turn(offset+-150,.7);
   leftwing.close();
   rightwing.close();
-  Drive.move(65,1.5);
+  Drive.move(63,1.5);
   Drive.turn(offset+45,1);
   rightwing.open();
   wait(.3,sec);
@@ -150,7 +150,7 @@ void skills(){
   leftwing.close();
   Drive.turn(130,1);
   Drive.move(10,1);
-  Drive.turn(40,1);
+  Drive.turn(50,1);
   rightwing.open();
   leftwing.open();
   Drive.move(1000,1);
@@ -161,7 +161,7 @@ void skills(){
   Drive.move(75,1.5);
   Drive.turn(offset+-150,1);
   Drive.move(-25,1);
-  Drive.turn(-70,1);
+  Drive.turn(-50,1);
   Drive.move(-100,1);
   Drive.move(10,.7);
   Drive.move(-100,1);
