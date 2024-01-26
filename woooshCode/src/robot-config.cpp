@@ -16,6 +16,7 @@ pneumatics rightwing = pneumatics(Brain.ThreeWirePort.A);
 pneumatics leftwing = pneumatics(Brain.ThreeWirePort.H);
 pneumatics dropDown = pneumatics(Brain.ThreeWirePort.B);
 pneumatics lift = pneumatics(Brain.ThreeWirePort.G);
+pot potSelector = pot(Brain.ThreeWirePort.C);
 
 motor_group leftdrive(left1, left2, left3);
 motor_group rightdrive(right1, right2, right3);

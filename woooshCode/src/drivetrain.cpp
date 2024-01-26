@@ -51,18 +51,27 @@ void drivetrainObj::move(double targetDistance, double timeout)
 
 void drivetrainObj::turn(double targetAngle, double timeout)
 {
-
+  double kp = 0.5;
+  double kd = 10;
   // establishes when the turn started
   int startTime = vex::timer::system();
+
+  double error, prevError, deriv, output;
+  prevError = (targetAngle - Inertial.rotation(deg));
   // limits the time so that it doesn't waste time fixing marginal error
-  double speed;
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed = (targetAngle - Inertial.rotation(deg)) * .19;
-    rightdrive.spin(fwd, -speed, pct);
-    leftdrive.spin(fwd, speed, pct);
-    wait(10, msec);
+    error = (targetAngle - Inertial.rotation(deg));
+    deriv = prevError - error;
+
+    output =  error * kp - deriv * kd;
+
+    prevError = error;
+
+    rightdrive.spin(fwd, -output, pct);
+    leftdrive.spin(fwd, output, pct);
+    wait(20, msec);
   }
   // stops slowly opposed to abruptly
   leftdrive.stop();
@@ -73,13 +82,17 @@ void drivetrainObj::turn(double targetAngle, double timeout)
 void drivetrainObj::swing(double targetAngle, double targetDistance, double timeout, bool rightTurn)
 {
   // variables
-  double turnKp = 1;
-  double distKp = 3.9;
-  double speed, fractionOfDriveCompleted, distanceTraveled, currentTargetAngle, turnErr;
-  double leftStartPos = left1.position(deg);
-  double rightStartPos = right1.position(deg);
-  double startAngle = Inertial.rotation(deg);
-  int startTime = vex::timer::system();
+  double  turnKp = .8;
+  double  turnKd = 0;
+  double  distKp = 1.2;
+
+  double  leftStartPos = left1.position(deg);
+  double  rightStartPos = right1.position(deg);
+  double  startAngle = Inertial.rotation(deg);
+  int     startTime = vex::timer::system();
+
+  double  speed, turnDeriv, turnSpeed, distanceTraveled, fractionOfDriveCompleted, currentTargetAngle, turnErr;
+  double  prevTurnError = 0;
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     if (rightTurn)
@@ -95,9 +108,16 @@ void drivetrainObj::swing(double targetAngle, double targetDistance, double time
     // find percentage of distance driven
     fractionOfDriveCompleted = distanceTraveled / targetDistance;
     // calculate the angle the robot should be at based on percent driven
-    currentTargetAngle = startAngle + fractionOfDriveCompleted * targetAngle;
+    currentTargetAngle = startAngle + fractionOfDriveCompleted * targetAngle * 1.2;
     // find the error of the robots angle
-    turnErr = (currentTargetAngle - Inertial.rotation(deg)) * turnKp;
+    turnErr = (currentTargetAngle - Inertial.rotation(deg));
+
+    turnDeriv = prevTurnError - turnErr;
+
+    prevTurnError = turnErr;
+
+    turnSpeed = turnErr * turnKp - turnDeriv * turnKd;
+
 
     rightdrive.spin(fwd, speed - turnErr, pct);
     leftdrive.spin(fwd, speed + turnErr, pct);

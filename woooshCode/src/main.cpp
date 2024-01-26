@@ -57,76 +57,55 @@ using namespace vex;
 // defines motor groups and abstracts the motors into simpler components
 competition Competition;
 int autoSelect = 0;
-
+int autoNum = 6;
 
 void pre_auton(void)
 {
   Inertial.calibrate();
   wait(3, sec);
-  Brain.Screen.print("Ready");
-  bool firstTouch = true;
-  while (!Competition.isDriverControl())
-  {
-    if (Brain.Screen.pressing())
-    {
-      if (firstTouch)
-      {
-        firstTouch = false;
-        autoSelect = (autoSelect + 1) % 8;
-      }
-    }
-    else
-    {
-      firstTouch = true;
-    }
-  }
+  con.Screen.print("Ready");
+  double potMax = 250;
+  double potMin = 0;
+  double frac;
+  // while (!Competition.isDriverControl())
+  // {
+  //   frac = (potSelector.angle(deg) - potMin) / (potMax - potMin);
+  //   autoSelect = floor(frac / (1.0 / autoNum))+1;
+  //   con.Screen.clearScreen();
+  //   con.Screen.setCursor(1,1);
+  //   con.Screen.print(autoSelect);
+  //   Brain.Screen.print(autoSelect);
+  //   printf("%f\t", potSelector.angle(deg));
+  //   printf("%d\n", autoSelect);
+  // }
 }
 
-void backup()
-{
-  Drive.move(-100, 2);
-  Drive.move(10, 1);
-}
 
-void wooshDefense()
-{
-  intake.spin(fwd, -100, pct);
-  Drive.move(-40, 1);
-  Drive.move(10, 1);
-  Drive.turn(10, 1);
-  dropDown.open();
-  Drive.move(24, 1);
-  Drive.turn(18, 1);
-  dropDown.close();
-  Drive.move(45, 1);
-}
-
-void agroDefense()
+void AWPDefense()
 {
   kicker.spin(fwd,100,pct);
   dropDown.open();
   Drive.move(5,.3);
-  Drive.turn(-65,1.2);
+  Drive.turn(-40,1.2);
   dropDown.close();
   wait(.5,sec);
   kicker.stop();
   intake.spin(fwd,-100,pct);
-  Drive.move(40,1.5);
+  Drive.move(42,1.5);
   
 }
 
-void skills(){
+void skillsOG(){
   double offset = 5;
   intake.spin(fwd,100,pct);
-  lift.open();
-  wait(.5,sec);
-  lift.close();
-  // kicker.spin(fwd,100,pct);
-  // intake.spin(fwd,-100,pct);
-  // wait(35,sec);
+  // lift.open();
+  // wait(.5,sec);
+  // lift.close();
+  kicker.spin(fwd,100,pct);
+  wait(35,sec);
+  Drive.turn(offset+35,.8);
+  Drive.move(96,2.1);
   kicker.stop();
-  Drive.turn(offset+32,.8);
-  Drive.move(96,2.3);
   Drive.turn(offset+-150,.7);
   leftwing.close();
   rightwing.close();
@@ -140,7 +119,7 @@ void skills(){
   rightwing.close();
   Drive.turn(-90,1);
   Drive.move(35,1);
-  Drive.turn(offset+75,1);
+  Drive.turn(offset+75,.8);
   leftwing.open();
   rightwing.open();
   wait(.3,sec);
@@ -154,20 +133,46 @@ void skills(){
   rightwing.open();
   leftwing.open();
   Drive.move(1000,1);
-  Drive.move(-30,1);
-  Drive.turn(offset+-70,.7);
   rightwing.close();
   leftwing.close();
+  Drive.move(-30,1);
+
+  // Drive.turn(90,1);
+  // Drive.move(50,1.3);
+  // Drive.turn(-30,1);
+  // leftwing.open();
+  // Drive.move(15,1);
+  // Drive.turn(-50,1);
+  // Drive.move(1000,1);
+  // leftwing.close();
+  // rightwing.close();
+  // Drive.move(-100,1);
+  Drive.turn(offset+-70,.7);
   Drive.move(75,1.5);
-  Drive.turn(offset+-150,1);
-  Drive.move(-35,1);
+  Drive.turn(offset+-150,.6);
+  Drive.move(-17,.8);
   Drive.turn(-50,1);
-  Drive.move(-100,1);
-  Drive.move(10,.7);
-  Drive.move(-100,1);
-  Drive.move(10,.7);
+  dropDown.open();
+  Drive.move(-100,.7);
+  Drive.move(10,.5);
+  Drive.move(-100,.6);
+  Drive.move(100,.7);
 
 
+}
+void skillsUnfinished(){
+  intake.spin(fwd,100,pct);
+  lift.open();
+  wait(.5,sec);
+  lift.close();
+  // kicker.spin(fwd,100,pct);
+  // intake.spin(fwd,-100,pct);
+  // wait(35,sec);
+  kicker.stop();
+  Drive.turn(40,.8);
+  Drive.move(96,2.3);
+  Drive.turn(0,.7);
+  Drive.move(15,1);
 }
 
 void sixball() {
@@ -187,7 +192,7 @@ void sixball() {
   Drive.move(2000,.5);
   Drive.move(-10,.5);
   rightwing.close();
-  Drive.turn(8,.9);
+  Drive.turn(7,.9);
   intake.spin(fwd,100,pct);
   Drive.move(55,1.2);
   Drive.turn(140,.7);
@@ -208,6 +213,14 @@ void sixball() {
   Drive.move(-40,.5);
 
 
+}
+void doNothing(){
+  allmotors.stop();
+  wait(1000000,sec);
+}
+void testing(){
+  Drive.turn(90,100);
+  Drive.swing(50,40,5,true);
 }
 
 void agroOffense(){
@@ -237,13 +250,47 @@ void agroOffense(){
   intake.spin(fwd,-100,pct);
   Drive.move(30,1);
 }
+void midrush(){
+  intake.spin(fwd,100,pct);
+  lift.open();
+  wait(.1,sec);
+  lift.close();
+  Drive.move(59,1.3);
+  Drive.move(-15,1);
+  Drive.turn(100,1);
+  intake.stop(coast);
+  Drive.move(1000,.7);
+  Drive.move(-15,.7);
+  intake.spin(fwd,100,pct);
+  Drive.turn(-80,1);
+  Drive.move(20,1.2);
+  Drive.turn(125,1);
+  intake.stop(coast);
+  Drive.move(1000,1);
+  Drive.move(-10,1);
+  Drive.turn(-180,1);
+  Drive.move(70,1.5);
+
+}
+void defensemidrush(){
+  intake.spin(fwd,100,pct);
+  Drive.move(56,1.1);
+  Drive.move(-10,1);
+  Drive.turn(90,1);
+  intake.spin(fwd,-100,pct);
+  leftwing.open();
+  Drive.move(30,1);
+}
 
 void (*autonsList[])()=
 {
-  skills,
-  agroDefense,
+  testing,
   sixball,
-  wooshDefense,
+  skillsOG,
+  AWPDefense,
+  doNothing,
+  skillsUnfinished,
+
 };
 
 void autonomous()
@@ -254,6 +301,9 @@ void autonomous()
 
 void usercontrol()
 {
+  Inertial.calibrate();
+  wait(3000, msec);
+  testing();
   while (true)
   {
     // driving portion
