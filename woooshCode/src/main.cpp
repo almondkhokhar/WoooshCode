@@ -83,15 +83,24 @@ void pre_auton(void)
 
 void AWPDefense()
 {
-  kicker.spin(fwd,100,pct);
-  dropDown.open();
+  rightwing.open();
   Drive.move(5,.3);
   Drive.turn(-40,1.2);
-  dropDown.close();
-  wait(.5,sec);
+  rightwing.close();
+  Drive.turn(-75,1);
+  kicker.spin(fwd,100,pct);
+  wait(1.5,sec);
   kicker.stop();
+  Drive.turn(-40,1);
+  lift.open();
+  wait(.2,sec);
+  lift.close();
+  wait(.6,sec);
   intake.spin(fwd,-100,pct);
-  Drive.move(42,1.5);
+  Drive.move(44,1.5);
+  rightwing.open();
+  wait(.5,sec);
+  rightwing.close();
   
 }
 
@@ -101,8 +110,8 @@ void skillsOG(){
   // lift.open();
   // wait(.5,sec);
   // lift.close();
-  kicker.spin(fwd,100,pct);
-  wait(35,sec);
+  // kicker.spin(fwd,100,pct);
+  // wait(35,sec);
   Drive.turn(offset+35,.8);
   Drive.move(96,2.1);
   kicker.stop();
@@ -182,33 +191,36 @@ void sixball() {
   lift.close();
   wait(.3,sec);
   Drive.move(-38,1.1);
-  Drive.turn(160,.9);
+  Drive.turn(150,.9);
   rightwing.open();
-  Drive.move(17,.9);
+  Drive.move(19,.9);
   Drive.turn(80,.3);
   Drive.turn(90,.5);
-  intake.stop(coast);
+  intake.spin(fwd,-100,pct);
+  // intake.stop(coast);
   rightwing.open();
   Drive.move(2000,.5);
   Drive.move(-10,.5);
   rightwing.close();
-  Drive.turn(7,.9);
+  Drive.turn(17,.9);
   intake.spin(fwd,100,pct);
   Drive.move(55,1.2);
-  Drive.turn(140,.7);
-  Drive.move(15,.7);
-  Drive.turn(200,1);
+  Drive.turn(110,.7);
+  Drive.move(17,.7);
+  Drive.turn(180,1);
   leftwing.open();
-  intake.stop(coast);
+  intake.spin(fwd,-100,pct);
+  // intake.stop(coast);
   Drive.move(10000,.7);
   Drive.move(-15,.6);
   leftwing.close();
-  Drive.turn(-5,1);
+  Drive.turn(10,1);
   intake.spin(fwd,100,pct);
   Drive.move(20,.8);
   Drive.move(-15,.6);
-  Drive.turn(220,1);
-  intake.stop(coast);
+  Drive.turn(180,1);
+  intake.spin(fwd,-100,pct);
+  // intake.stop(coast);
   Drive.move(1000,.7);
   Drive.move(-40,.5);
 
@@ -219,7 +231,6 @@ void doNothing(){
   wait(1000000,sec);
 }
 void testing(){
-  Drive.turn(90,100);
   Drive.swing(50,40,5,true);
 }
 
@@ -272,22 +283,40 @@ void midrush(){
   Drive.move(70,1.5);
 
 }
-void defensemidrush(){
+void backBallDefense(){
+  lift.open();
+  kicker.spin(fwd,100,pct);
+  wait(.1,sec);
+  lift.close();
   intake.spin(fwd,100,pct);
-  Drive.move(56,1.1);
-  Drive.move(-10,1);
+  Drive.move(56,1.2);
+  kicker.stop();
+  Drive.move(-9,.8);
+  Drive.turn(220,1);
+  Drive.move(51.5,1);
+  Drive.turn(135,1);
+  rightwing.open();
+  Drive.move(15,1);
   Drive.turn(90,1);
   intake.spin(fwd,-100,pct);
-  leftwing.open();
-  Drive.move(30,1);
+  Drive.move(44,1);
+  rightwing.close();
+  Drive.move(-44,1);
+  Drive.turn(130,.7);
+  Drive.move(-20,1);
+  Drive.turn(60,1);
+  Drive.move(-5,1);
+
+
 }
 
 void (*autonsList[])()=
 {
-  testing,
-  sixball,
-  skillsOG,
   AWPDefense,
+  skillsOG,
+  backBallDefense,
+  sixball,
+  testing,
   doNothing,
   skillsUnfinished,
 
@@ -301,9 +330,6 @@ void autonomous()
 
 void usercontrol()
 {
-  Inertial.calibrate();
-  wait(3000, msec);
-  testing();
   while (true)
   {
     // driving portion

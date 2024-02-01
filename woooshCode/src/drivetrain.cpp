@@ -25,7 +25,7 @@ double drivetrainObj::getEncoderValue()
 
 void drivetrainObj::move(double targetDistance, double timeout)
 {
-  double distKp = 3.9;
+  double distKp = 3.3;
   // establishes when we started the procedure
   // records a starting position of the bot
   double startPos = right1.position(deg);
@@ -51,27 +51,17 @@ void drivetrainObj::move(double targetDistance, double timeout)
 
 void drivetrainObj::turn(double targetAngle, double timeout)
 {
-  double kp = 0.5;
-  double kd = 10;
   // establishes when the turn started
   int startTime = vex::timer::system();
-
-  double error, prevError, deriv, output;
-  prevError = (targetAngle - Inertial.rotation(deg));
+  double speed;
   // limits the time so that it doesn't waste time fixing marginal error
   while (vex::timer::system() - startTime < timeout * 1000)
   {
+    speed = (targetAngle - Inertial.rotation(deg)) * .35;
+    rightdrive.spin(fwd, -speed, pct);
+    leftdrive.spin(fwd, speed, pct);
+    wait(10, msec);
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    error = (targetAngle - Inertial.rotation(deg));
-    deriv = prevError - error;
-
-    output =  error * kp - deriv * kd;
-
-    prevError = error;
-
-    rightdrive.spin(fwd, -output, pct);
-    leftdrive.spin(fwd, output, pct);
-    wait(20, msec);
   }
   // stops slowly opposed to abruptly
   leftdrive.stop();
