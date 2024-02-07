@@ -25,7 +25,7 @@ double drivetrainObj::getEncoderValue()
 
 void drivetrainObj::move(double targetDistance, double timeout)
 {
-  double distKp = 3.3;
+  double distKp = 3.9;
   // establishes when we started the procedure
   // records a starting position of the bot
   double startPos = right1.position(deg);
@@ -49,6 +49,39 @@ void drivetrainObj::move(double targetDistance, double timeout)
   rightdrive.stop();
 }
 
+void drivetrainObj::swingGood(double targetDistance, double timeout, double turnMult, bool RightSide)
+{
+  double distKp = 3.9;
+  // establishes when we started the procedure
+  // records a starting position of the bot
+  double startPos = (right1.position(deg) + left1.position(deg)) / 2.0;
+  // records a starting position of the bot
+  double startAng = Inertial.rotation(deg);
+  int startTime = vex::timer::system();
+  // limits the time the procedure can run
+  double speed, turnErr;
+  while (vex::timer::system() - startTime < timeout * 1000)
+  {
+    // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
+    speed = (targetDistance - ((right1.position(deg) + left1.position(deg)) / 2.0 - startPos) * 3.14159 / 180 * 3.25) * distKp;
+    // set the drive to the correct speed
+    if (RightSide) {
+      rightdrive.spin(fwd, speed * turnMult, pct);
+      leftdrive.spin(fwd, speed, pct);
+    }
+    else
+    {
+      rightdrive.spin(fwd, speed, pct); 
+      leftdrive.spin(fwd, speed * turnMult, pct);
+    }
+    
+    wait(10, msec);
+  }
+  leftdrive.stop();
+  rightdrive.stop();
+}
+
+
 void drivetrainObj::turn(double targetAngle, double timeout)
 {
   // establishes when the turn started
@@ -57,7 +90,7 @@ void drivetrainObj::turn(double targetAngle, double timeout)
   // limits the time so that it doesn't waste time fixing marginal error
   while (vex::timer::system() - startTime < timeout * 1000)
   {
-    speed = (targetAngle - Inertial.rotation(deg)) * .35;
+    speed = (targetAngle - Inertial.rotation(deg)) * .329;
     rightdrive.spin(fwd, -speed, pct);
     leftdrive.spin(fwd, speed, pct);
     wait(10, msec);
@@ -72,9 +105,9 @@ void drivetrainObj::turn(double targetAngle, double timeout)
 void drivetrainObj::swing(double targetAngle, double targetDistance, double timeout, bool rightTurn)
 {
   // variables
-  double  turnKp = .8;
+  double  turnKp = .9;
   double  turnKd = 0;
-  double  distKp = 1.2;
+  double  distKp = 1.7;
 
   double  leftStartPos = left1.position(deg);
   double  rightStartPos = right1.position(deg);
