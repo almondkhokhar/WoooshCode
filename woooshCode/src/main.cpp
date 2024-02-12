@@ -11,7 +11,16 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-
+#include <math.h>
+#include <iostream> 
+#define Pi 3.14159265358979323846
+#define fieldscale 1.66548042705
+#define SL 5 //distance from tracking center to middle of left wheel
+#define SR 5 //distance from tracking center to middle of right wheel
+#define SS 7.75 //distance from tracking center to middle of the tracking wheel
+#define WheelDiam 3.25 //diameter of all the wheels being used for tracking
+#define tpr 360  //Degrees per single encoder rotation
+double DeltaL,DeltaR,DeltaB,currentL,currentR,PreviousL,PreviousR,DeltaTheta,X,Y,Theta,DeltaXSide,DeltaYSide,SideChord,OdomHeading;
 // initializes variables
 class Drive{
   public:
@@ -63,6 +72,19 @@ void pre_auton(void)
   //Calibrates gyro for auton
   Inertial.calibrate();
   wait(3, sec);
+  Brain.resetTimer();
+  //sets starting position at (0,0) and resets motor encoders
+  right1.setPosition(0, deg);
+  right2.setPosition(0, deg);
+  right3.setPosition(0, deg);
+  left1.setPosition(0, deg);
+  left2.setPosition(0, deg);
+  left3.setPosition(0, deg);
+
+
+  //SET VALUES FOR INITIAL ROBOT POSITION
+  X = 0;
+  Y = 0;
   //Says when you are ready
   con.Screen.print("Ready");
 
@@ -83,9 +105,132 @@ void pre_auton(void)
   //   printf("%d\n", autoSelect);
   // }
 }
+void positionTracker() {
+// 2 cases could be occuring in odometry
+// 1: Going in a straight line
+// 2: Going in an arc motion
+// If the bot is on an angle and going straight the displacement would be linear at angle Theta, meaning a right triangle is formed (Trig ratios to calc movement)
+// Since it is a linear motion, the Left and right will move the same amount so we can just pick a side and do our movement calculation
+// Since this calculation is working based of very infinitely small arcs, the displacement of the robot will be a chord
+// Averages the Left and Right integrated motor encoders since we don't have encoders yet
+  currentR = (right1.position(degrees) + right2.position(degrees)+(right3.position(degrees))) / 3;
+  currentL = (left1.position(degrees) + left2.position(degrees)+(left3.position(degrees))) / 3;
 
+  //Creates variables for change in each side info in inches (12.9590697 is circumference of wheel)
+  DeltaL = ((currentL - PreviousL) * 12.9590697) / tpr;
+  DeltaR = ((currentR - PreviousR) * 12.9590697) / tpr;
+  //DeltaB = ((currentB - PreviousB) * 12.9590697) / tpr;
+
+  //Determines the change in angle of the robot using the rotational change in each side
+  DeltaTheta = (DeltaR - DeltaL) / (SL + SR);
+
+  //Creates an if/else statement to prevent NaN values from appearing and causing issues with calculation
+  if(DeltaTheta == 0) {  //If there is no change in angle
+    X += DeltaL * sin (Theta);
+    Y += DeltaL * cos (Theta);
+    //X += DeltaB * cos (Theta + 1.57079633);
+    //Y += DeltaB * sin (Theta + 1.57079633);
+
+  //If there is a change in angle, it will calculate the changes in X,Y from chords of an arc/circle.
+  } else {  //If the angle changes
+      SideChord = 2 * ((DeltaL / DeltaTheta) + SL) * sin (DeltaTheta / 2);
+      //BackChord = 2 * ((DeltaB / DeltaTheta) + SS) * sin (DeltaTheta / 2);
+      DeltaYSide = SideChord * cos (Theta + (DeltaTheta / 2));
+      DeltaXSide = SideChord * sin (Theta + (DeltaTheta / 2));
+      //DeltaXBack = BackChord * sin (Theta + (DeltaTheta / 2));
+      //DeltaYBack = -BackChord * cos (Theta + (DeltaTheta / 2));
+      Theta += DeltaTheta;
+      X += DeltaXSide;
+      Y += DeltaYSide;
+    }
+
+    //Odom heading is converting the radian value of Theta into degrees
+    OdomHeading = Theta * 57.295779513;
+
+    //Converts values into newer values to allow for code to effectively work in next cycle
+    PreviousL = currentL;
+    PreviousR = currentR;
+    DeltaTheta = 0;
+  /*--------------------GRAPHICS--------------------*/
+    //Coordinates for each section of text
+    int textadjustvalue = 55;
+    int rowadjust = 39;
+
+    //Sets graphical things for our display 
+    Brain.Screen.setPenWidth( 1 );
+    vex::color redtile = vex::color( 210, 31, 60 );
+    vex::color bluetile = vex::color( 14, 77, 146 );
+    vex::color graytile = vex::color( 49, 51, 53 );
+    Brain.Screen.setFillColor(vex::color( 0, 0, 0 ));
+    Brain.Screen.setFont(vex::fontType::mono20);
+    Brain.Screen.setPenColor( vex::color( 222, 49, 99 ) );
+
+    //Displays all the field tiles, text of odom values, and a dot symbolizing the robot
+    Brain.Screen.printAt(40,20 + textadjustvalue, "X-Pos:%f",-X);
+    Brain.Screen.setPenColor( vex::color( 191, 10, 48 ) );
+    Brain.Screen.printAt(40,50 + textadjustvalue, "Y-Pos:%f",Y);
+    Brain.Screen.setPenColor( vex::color( 141, 2, 31 ) );
+    Brain.Screen.printAt(40,80 + textadjustvalue, "Theta:%f",Theta);
+    Brain.Screen.setPenColor( vex::color( 83, 2, 1 ) );
+    Brain.Screen.printAt(40,110 + textadjustvalue, "Angle:%f",OdomHeading);
+    Brain.Screen.setPenColor( vex::color( 255, 255, 255 ) );
+    Brain.Screen.setFillColor( graytile );
+    Brain.Screen.drawRectangle( 245, 2, 234, 234 );
+    Brain.Screen.drawRectangle( 245, 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245, 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245, 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245, 197, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 41, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 158, 39, 39 );
+    Brain.Screen.drawRectangle( 245+rowadjust, 197, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 41, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 158, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(2*rowadjust), 197, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 41, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 158, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(3*rowadjust), 197, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 41, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 158, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(4*rowadjust), 197, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 2, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 80, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 119, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 197, 39, 39 );
+    Brain.Screen.setFillColor( redtile );
+    Brain.Screen.drawRectangle( 245, 158, 39, 39 );
+    Brain.Screen.drawRectangle( 245, 41, 39, 39 );
+    Brain.Screen.setFillColor( bluetile );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 41, 39, 39 );
+    Brain.Screen.drawRectangle( 245+(5*rowadjust), 158, 39, 39 );
+    Brain.Screen.setPenColor( vex::color( 255,255,255));
+    Brain.Screen.setFillColor( vex::color(0,0,0) );
+    
+    //This draws the robot body for position and arm for angle
+    double yfieldvalue = ((-Y)*fieldscale)+245-10;
+    double xfieldvalue = ((-X)*fieldscale)+245;
+    Brain.Screen.drawCircle(xfieldvalue, yfieldvalue, 10 );
+    Brain.Screen.setPenWidth( 4 );
+    //Line angle calculation:
+    //x1 and y1 are the robot's coordinates, which in our case is xfieldvalue and yfieldvalue
+    //angle is the angle the robot is facing, which in our case is Theta
+    //(x1,y1, x1 + line_length*cos(angle),y1 + line_length*sin(angle)) = (x1,y1,x2,y2)
+    Brain.Screen.drawLine(xfieldvalue, yfieldvalue, xfieldvalue+cos(-Theta-(Pi/2))*15, yfieldvalue+ sin(-Theta-(Pi/2)) *15);
+  }
 // Quals auton to remove ball and touch bar and shoot matchload
 // Setup: against bar, with wing deployable intake facing wall
+
 void AWPDefense()
 {
   //removes triball
@@ -117,8 +262,8 @@ void skills(){
   int startTime = vex::timer::system();
   //shooting matchloads
   kicker.spin(fwd,100,pct);
-  wait(30, sec);
-  //drops intake
+  wait(30.2, sec);
+  // //drops intake
   lift.open();
   //scores 2 red triballs in the blue goal
   Drive.turn(75 , .5);
@@ -142,16 +287,16 @@ void skills(){
   rightwing.close();
   //gets into the alley way and pushes triballs towards the goal
   intake.spin(fwd,100,pct);
-  Drive.turn(-146 , .65);
+  Drive.turn(-146 , .8);
   Drive.move(35 , .8);
   Drive.turn(-30 , .7);
   Drive.move(30 , .7);
-  Drive.turn(32 , .6);
+  Drive.turn(34 , .6);
   leftwing.open();
   intake.spin(fwd,-100,pct);
-  Drive.move(70 , 1.3);
+  Drive.move(67 , 1.3);
   // leftwing.close();
-  Drive.move(17 , .7);
+  Drive.move(19 , .8);
   Drive.turn(63 , .55);
   leftwing.open();
   Drive.move(23 , .7);
@@ -167,15 +312,16 @@ void skills(){
   Drive.move(-4 , .4);
   //turns and gets ready for the first push in the front
   rightwing.close();
-  Drive.turn(210 , .7);
+  Drive.turn(210 , .6);
   intake.spin(fwd,100,pct);
   Drive.move(50 , .8);
   rightwing.open();
   Drive.turn(80 , .8);
   leftwing.open();
-  intake.stop(coast);
+  intake.spin(fwd,-100,pct);
   //first push in the front
-  Drive.swingGood(40 , .75, .4, false);
+  Drive.swingGood(45 , .9, .4, false);
+  intake.stop(coast);
   Drive.move(1000 , .3);
   Drive.turn(80 , .6);
   leftwing.close();
@@ -184,63 +330,45 @@ void skills(){
   intake.spin(fwd,100,pct);
   Drive.turn(130 , .7);
   Drive.move(25 , .6);
-  Drive.turn(80 , .8);
+  Drive.turn(80 , .65);
   rightwing.open();
   leftwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.swingGood(26 , .8, .42, false);
   intake.stop(coast);
-  Drive.swingGood(30 , .8, .4, false);
   Drive.move(1000 , .45);
-  //Drive.turn(32,.3);
   leftwing.close();
   rightwing.close();
-  //replace with swing
-  Drive.swingGood(-30, .75, .5, true);
-  // Drive.move(-10 , .5);
-  // intake.spin(fwd,100,pct);
-  // Drive.turn(-62 , .6);
-  //end replacement
-  //replace with swing
-  rightwing.open();
-  leftwing.open();
-  Drive.swingGood(20 , .75, .3, true);
-  // Drive.move(10 , .5);
-  // Drive.turn(32 , .6);
-  //end replacement
   intake.stop(coast);
   Drive.turn(32 , .2);  
-  Drive.move(1000,.45);
-  Drive.move(-20,.65);
-  intake.spin(fwd,100,pct);
-  Drive.turn(100 ,.65);
-  leftwing.close();
-  rightwing.close();
-  Drive.move(70,1.2);
-  Drive.turn(-30 , .5);
+  Drive.move(-23 , .65);
+  intake.spin(fwd, 100, pct);
   leftwing.open();
-  //replace this with a swing
-  Drive.swingGood(40, .7, .6, false);
-  // Drive.move(27 , .7);
-  // Drive.turn(-75 , .7);
-  // end swing replacement
-  intake.stop(coast);
-  Drive.move(1000 , .3);
-  Drive.move(-10,.3);
-
-
+  Drive.turn(105 , .6);
+  Drive.move(58 , 1.1);
+  Drive.turn(-30 , .8);
+  rightwing.open();
+  Drive.swingGood(36 , .8, .53, false);
+  intake.spin(fwd, -100, pct);
+  Drive.move(1000 , .4);
+  Drive.move(-10, .4);
+  Drive.move(1000 , .4);
+  Drive.move(-10 , .4);
   printf("%lu\n",(vex::timer::system()-startTime));
 
 }
 //scores 6 triballs safely
 //Setup: intake facing neutral triball dropdown over the half bar for distance away and centered at that distance matchload in the center of the back of the bot
 void sixball() {
+  int startTime = vex::timer::system();
   //picks up neutral triball
   intake.spin(fwd,100,pct);
   lift.open();
   wait(.2,sec);
   lift.close();
-  wait(.2 , sec);
+  wait(.2, sec);
   //drives backwards to remove the triball in the corner
-  Drive.move(-38 , 1.1);
+  Drive.move(-38 , 1);
   Drive.turn(150 , .6);
   rightwing.open();
   Drive.move(18.5 , .8);
@@ -250,18 +378,19 @@ void sixball() {
   // intake.stop(coast);
   rightwing.open();
   Drive.move(2000 , .5);
-  Drive.move(-10 , .5);
-  Drive.move(2000 , .5);
+  Drive.move(-10 , .3);
+  Drive.move(2000 , .4);
   Drive.move(-10 , .5);
   rightwing.close();
   //turns to score triball on mid bar only in our zone
-  Drive.turn(17 , .9);
+  Drive.turn(16.5 , .85);
   intake.spin(fwd,100,pct);
-  Drive.move(52 , 1.1);
+  Drive.move(52 , 1.05);
   //turns and uses wings to score the triball in the intake and the triball in the center
-  Drive.turn(110 , .7);
-  Drive.move(17 , .7);
-  Drive.turn(180 , .6);
+  Drive.turn(110 , .65);
+  Drive.move(16 , .6);
+  intake.stop(coast);
+  Drive.turn(180 , .45);
   leftwing.open();
   intake.spin(fwd,-100,pct);
   // intake.stop(coast);
@@ -269,19 +398,23 @@ void sixball() {
   //reverses to get the last triball and score it
   Drive.move(-15 , .6);
   leftwing.close();
-  Drive.turn(9 , 1);
+  Drive.turn(9 , .75);
   intake.spin(fwd,100,pct);
-  Drive.move(19 , .8);
-  Drive.turn(190 , 1);
+  Drive.move(21 , .7);
+  Drive.turn(190 , .8);
   intake.spin(fwd,-100,pct);
   // intake.stop(coast);
   rightwing.open();
   leftwing.open();
-  Drive.move(1000 , .7);
+  Drive.move(1000 , .6);
   rightwing.close();
   leftwing.close();
   //backs away from the goal
-  Drive.move(-20 , .5);
+  Drive.move(-10 , .6);
+  // Drive.turn(320 , .7);
+  // Drive.move(90 , 1.06);
+  // dropDown.open();
+  printf("%lu\n",(vex::timer::system()-startTime));
 
 
 }
@@ -293,7 +426,16 @@ void doNothing(){
 void testing(){
   Drive.turn(65,2);
 }
-
+void easymidrush (){
+  rightwing.open();
+  lift.open();
+  wait(.2 , sec);
+  lift.close();
+  intake.spin(fwd, 100, pct);
+  Drive.swingGood(60 , 1.2, .4, false);
+  Drive.turn(100 , .7);
+  Drive.move(1000 , .7);
+}
  
 void midrush(){
   int startTime = vex::timer::system();
@@ -304,10 +446,10 @@ void midrush(){
   lift.close();
   Drive.move(59 , 1);
   rightwing.close();
-  Drive.move(-8 , .4);
-  Drive.turn(100 , .5);
+  Drive.move(-6 , .4);
+  Drive.turn(95 , .5);
   intake.stop(coast);
-  Drive.move(1000 , .4);
+  Drive.move(1000 , .6);
   Drive.move(-15 , .6);
   intake.spin(fwd,100,pct);
   Drive.turn(-75 , .8);
@@ -319,7 +461,7 @@ void midrush(){
   Drive.move(-10, .5);
   Drive.turn(250, .7);
   intake.spin(fwd,100,pct);
-  Drive.move(36, 1.1);
+  Drive.move(33, .9);
   Drive.turn(130, .8);
   intake.spin(fwd, -100, pct);
   Drive.move(30 , .9);
@@ -332,9 +474,9 @@ void midrush(){
   Drive.move(-36 , .9);
   Drive.turn(420 , .6);
   rightwing.open();
-  Drive.move(17.5 , .7);
+  Drive.move(20.5 , .8);
   // turns and scores all 3 triballs
-  Drive.turn(390 , .4);
+  Drive.turn(380 , .6);
   intake.spin(fwd,-100,pct);
   // intake.stop(coast);
   rightwing.open();
@@ -347,43 +489,55 @@ void midrush(){
 
 }
 void backBallDefense(){
+  leftwing.open();
   lift.open();
-  kicker.spin(fwd,100,pct);
-  wait(.1,sec);
+  wait(.2,sec);
   lift.close();
+  leftwing.close();
   intake.spin(fwd,100,pct);
   Drive.move(56 , 1.2);
-  kicker.stop();
   Drive.move(-9 , .8);
   Drive.turn(220 , 1);
-  Drive.move(50 , 1);
+  Drive.move(48 , 1.3);
   Drive.turn(135 , 1);
   rightwing.open();
-  Drive.move(5 , 1);
+  Drive.move(5 , .4);
   Drive.turn(100 , .8);
-  Drive.turn(135 , .6);
-  Drive.move(7 , .6);
-  Drive.turn(87 , 1);
-  intake.spin(fwd,-100,pct);
-  Drive.move(40 , 1);
   rightwing.close();
-  Drive.move(-40 , 1);
-  Drive.turn(130 , .7);
-  Drive.move(-20 , 1);
-  Drive.turn(60 , .8);
-  Drive.move(-10 , 1);
+  Drive.move(-15 , .6);
+  Drive.turn(190 , .55);
+  Drive.move(-12 , .85);
+  Drive.move(10 , .5);
+  Drive.turn(120 , .6);
+  rightwing.open();
+  Drive.move(33 , 1);
+  Drive.turn(80 , .8);
+  intake.spin(fwd,-100,pct);
+  Drive.move(25 , 1.1);
+
+  // Drive.turn(135 , .6);
+  // Drive.move(7 , .6);
+  // Drive.turn(87 , 1);
+  // intake.spin(fwd,-100,pct);
+  // Drive.move(40 , 1);
+  // rightwing.close();
+  // Drive.move(-40 , 1);
+  // Drive.turn(130 , .7);
+  // Drive.move(-20 , 1);
+  // Drive.turn(60 , .8);
+  // Drive.move(-10 , 1);
 
 
 }
 
 void (*autonsList[])()=
 {
-  midrush,
-  skills,
-  testing,
   sixball,
+  skills,
   AWPDefense,
   backBallDefense,
+  easymidrush,
+  testing,
   doNothing,
 
 };
@@ -400,6 +554,8 @@ void usercontrol()
   {
     // driving portion
     // controls the speed at which the robot moves
+    positionTracker();
+    Brain.Screen.render(); //push data to the LCD all at once to prevent image flickering
     rightdrive.spin(fwd, con.Axis2.value(), pct);
     leftdrive.spin(fwd, con.Axis3.value(), pct);
     // turns the intake on or off
@@ -490,18 +646,11 @@ void usercontrol()
       if (Shoottogg && f4loop)
       {
         lift.open();
-        // uppy2.open();
-        // lift.open();
-        // uppy4.open();
         f4loop = false;
       }
       if (!Shoottogg && f4loop)
       {
         lift.close();
-        // uppy2.close();
-        // lift.close();
-        // uppy4.close();
-        // f4loop=false;
         f4loop = false;
       }
     }

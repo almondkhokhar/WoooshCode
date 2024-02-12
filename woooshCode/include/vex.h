@@ -19,7 +19,7 @@
 
 #include "robot-config.h"
 #include "drivetrain.h"
-
+#include "odom.h"
 
 
 #define waitUntil(condition)                                                   \
