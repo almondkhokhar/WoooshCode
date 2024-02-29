@@ -124,7 +124,6 @@ void positionTracker() {
   //Determines the change in angle of the robot using the rotational change in each side
   DeltaTheta = (DeltaR - DeltaL) / (SL + SR);
 
-  //Creates an if/else statement to prevent NaN values from appearing and causing issues with calculation
   if(DeltaTheta == 0) {  //If there is no change in angle
     X += DeltaL * sin (Theta);
     Y += DeltaL * cos (Theta);
@@ -151,15 +150,13 @@ void positionTracker() {
     PreviousL = currentL;
     PreviousR = currentR;
     DeltaTheta = 0;
-  /*--------------------GRAPHICS--------------------*/
+  /*--------------------Fancy Brain--------------------*/
     //Coordinates for each section of text
     int textadjustvalue = 55;
     int rowadjust = 39;
 
     //Sets graphical things for our display 
     Brain.Screen.setPenWidth( 1 );
-    vex::color redtile = vex::color( 210, 31, 60 );
-    vex::color bluetile = vex::color( 14, 77, 146 );
     vex::color graytile = vex::color( 49, 51, 53 );
     Brain.Screen.setFillColor(vex::color( 0, 0, 0 ));
     Brain.Screen.setFont(vex::fontType::mono20);
@@ -208,25 +205,15 @@ void positionTracker() {
     Brain.Screen.drawRectangle( 245+(5*rowadjust), 80, 39, 39 );
     Brain.Screen.drawRectangle( 245+(5*rowadjust), 119, 39, 39 );
     Brain.Screen.drawRectangle( 245+(5*rowadjust), 197, 39, 39 );
-    Brain.Screen.setFillColor( redtile );
     Brain.Screen.drawRectangle( 245, 158, 39, 39 );
     Brain.Screen.drawRectangle( 245, 41, 39, 39 );
-    Brain.Screen.setFillColor( bluetile );
     Brain.Screen.drawRectangle( 245+(5*rowadjust), 41, 39, 39 );
     Brain.Screen.drawRectangle( 245+(5*rowadjust), 158, 39, 39 );
     Brain.Screen.setPenColor( vex::color( 255,255,255));
     Brain.Screen.setFillColor( vex::color(0,0,0) );
     
-    //This draws the robot body for position and arm for angle
-    double yfieldvalue = ((-Y)*fieldscale)+245-10;
-    double xfieldvalue = ((-X)*fieldscale)+245;
-    Brain.Screen.drawCircle(xfieldvalue, yfieldvalue, 10 );
-    Brain.Screen.setPenWidth( 4 );
-    //Line angle calculation:
-    //x1 and y1 are the robot's coordinates, which in our case is xfieldvalue and yfieldvalue
-    //angle is the angle the robot is facing, which in our case is Theta
-    //(x1,y1, x1 + line_length*cos(angle),y1 + line_length*sin(angle)) = (x1,y1,x2,y2)
-    Brain.Screen.drawLine(xfieldvalue, yfieldvalue, xfieldvalue+cos(-Theta-(Pi/2))*15, yfieldvalue+ sin(-Theta-(Pi/2)) *15);
+
+    
   }
 // Quals auton to remove ball and touch bar and shoot matchload
 // Setup: against bar, with wing deployable intake facing wall
@@ -532,8 +519,8 @@ void backBallDefense(){
 
 void (*autonsList[])()=
 {
-  sixball,
   skills,
+  sixball,
   AWPDefense,
   backBallDefense,
   easymidrush,
