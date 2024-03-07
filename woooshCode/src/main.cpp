@@ -249,7 +249,7 @@ void skills(){
   int startTime = vex::timer::system();
   //shooting matchloads
   kicker.spin(fwd,100,pct);
-  wait(30.2, sec);
+  // wait(30.2, sec);
   // //drops intake
   lift.open();
   //scores 2 red triballs in the blue goal
@@ -263,84 +263,75 @@ void skills(){
   Drive.move(5 , .3);
   Drive.turn(39 , .7);
   intake.spin(fwd,100,pct);
-  Drive.move(51 , 1);
+  Drive.move(52 , 1);
   //readjusts and pushes triballs over the half bar
-  Drive.turn(-60 , .8);
+  Drive.turn(-61 , .8);
   rightwing.open();
   leftwing.open();
   intake.spin(fwd,-100,pct);
   Drive.move(85 , 1.6);
+  wait(.03, sec);
   leftwing.close();
   rightwing.close();
   //gets into the alley way and pushes triballs towards the goal
   intake.spin(fwd,100,pct);
-  Drive.turn(-146 , .8);
-  Drive.move(35 , .8);
-  Drive.turn(-30 , .7);
-  Drive.move(30 , .7);
-  Drive.turn(34 , .6);
-  leftwing.open();
-  intake.spin(fwd,-100,pct);
-  Drive.move(67 , 1.3);
-  // leftwing.close();
-  Drive.move(19 , .8);
-  Drive.turn(63 , .55);
-  leftwing.open();
-  Drive.move(23 , .7);
-  Drive.turn(140 , .6);
-  //readjusts and pushes into the side of the goal
-  leftwing.close();
-  Drive.turn(70 , .5);
-  Drive.move(10 , .3);
-  intake.stop(coast);
-  Drive.turn(105 , .4);
+  Drive.turn(-146 , .65);
+  Drive.move(50 , 1.1);
+  Drive.turn(-35 , .7);
+  Drive.swingGood(34, .8, .52, true);
+  Drive.turn(37.8, .4);
   rightwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.move(76 , 1.7);
+  Drive.turn(39, .3);
+  Drive.swingGood(36, .9, .6, true);
+  // //readjusts and pushes into the side of the goal
+  Drive.swingGood(20, .7, .8, true);
+  intake.stop(coast);
   Drive.move(1000 , .6);
-  Drive.move(-4 , .4);
+  Drive.move(-5 , .4);
   //turns and gets ready for the first push in the front
   rightwing.close();
-  Drive.turn(210 , .6);
+  Drive.turn(210 , .8);
   intake.spin(fwd,100,pct);
   Drive.move(50 , .8);
   rightwing.open();
-  Drive.turn(80 , .8);
+  Drive.turn(75 , .8);
   leftwing.open();
   intake.spin(fwd,-100,pct);
   //first push in the front
-  Drive.swingGood(45 , .9, .4, false);
+  Drive.swingGood(33 , .9, .4, false);
   intake.stop(coast);
-  Drive.move(1000 , .3);
-  Drive.turn(80 , .6);
+  Drive.move(1000 , .4);
+  Drive.move(-4 , .3);
+  Drive.move(1000 , .4);
   leftwing.close();
   rightwing.close();
-  Drive.move(-35 , .8);
-  intake.spin(fwd,100,pct);
-  Drive.turn(130 , .7);
-  Drive.move(25 , .6);
-  Drive.turn(80 , .65);
+  Drive.turn(-80, .8);
+  Drive.move(20, .65);
+  Drive.turn(-260, 1.2);
+  Drive.move(15, .55);
   rightwing.open();
   leftwing.open();
-  intake.spin(fwd,-100,pct);
-  Drive.swingGood(26 , .8, .42, false);
-  intake.stop(coast);
+  Drive.swingGood(35, .9, .4, false);
   Drive.move(1000 , .45);
-  leftwing.close();
-  rightwing.close();
-  intake.stop(coast);
-  Drive.turn(32 , .2);  
-  Drive.move(-23 , .65);
-  intake.spin(fwd, 100, pct);
-  leftwing.open();
-  Drive.turn(105 , .6);
-  Drive.move(58 , 1.1);
-  Drive.turn(-30 , .8);
-  rightwing.open();
-  Drive.swingGood(36 , .8, .53, false);
-  intake.spin(fwd, -100, pct);
-  Drive.move(1000 , .4);
-  Drive.move(-10, .4);
-  Drive.move(1000 , .4);
-  Drive.move(-10 , .4);
+  // leftwing.close();
+  // rightwing.close();
+  // intake.stop(coast);
+  // Drive.turn(32 , .2);  
+  // Drive.move(-23 , .65);
+  // intake.spin(fwd, 100, pct);
+  // leftwing.open();
+  // Drive.turn(105 , .6);
+  // Drive.move(58 , 1.1);
+  // Drive.turn(-30 , .8);
+  // rightwing.open();
+  // Drive.swingGood(36 , .8, .53, false);
+  // intake.spin(fwd, -100, pct);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10, .4);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10 , .4);
   printf("%lu\n",(vex::timer::system()-startTime));
 
 }
