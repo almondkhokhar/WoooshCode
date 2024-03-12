@@ -245,11 +245,11 @@ void AWPDefense()
 }
 //Clears triballs starting on our side and removes one triball from the corner on the left side of the red goal
 //Setup: Front left wheel in the notch of the field tiles intake up and aimed at the goal red triballs: one with midline at the back of the wing other with one corner in the blue goal
-void skills(){
+void newskills(){
   int startTime = vex::timer::system();
   //shooting matchloads
   kicker.spin(fwd,100,pct);
-  // wait(30.2, sec);
+  wait(29.8, sec);
   // //drops intake
   lift.open();
   //scores 2 red triballs in the blue goal
@@ -290,31 +290,73 @@ void skills(){
   intake.stop(coast);
   Drive.move(1000 , .6);
   Drive.move(-5 , .4);
-  //turns and gets ready for the first push in the front
   rightwing.close();
-  Drive.turn(210 , .8);
+  Drive.turn(210 , .6);
   intake.spin(fwd,100,pct);
-  Drive.move(50 , .8);
   rightwing.open();
-  Drive.turn(75 , .8);
+  Drive.move(50 , .8);
+  Drive.turn(80 , .8);
   leftwing.open();
   intake.spin(fwd,-100,pct);
   //first push in the front
-  Drive.swingGood(33 , .9, .4, false);
+  Drive.swingGood(45 , .9, .4, false);
   intake.stop(coast);
-  Drive.move(1000 , .4);
-  Drive.move(-4 , .3);
-  Drive.move(1000 , .4);
+  Drive.move(1000 , .3);
+  Drive.turn(80 , .6);
   leftwing.close();
   rightwing.close();
-  Drive.turn(-80, .8);
-  Drive.move(20, .65);
-  Drive.turn(-260, 1.2);
-  Drive.move(15, .55);
+  Drive.move(-35 , .8);
+  intake.spin(fwd,100,pct);
+  Drive.turn(130 , .7);
   rightwing.open();
+  Drive.move(25 , .6);
+  Drive.turn(80 , .65);
   leftwing.open();
-  Drive.swingGood(35, .9, .4, false);
+  intake.spin(fwd,-100,pct);
+  Drive.swingGood(26 , .8, .42, false);
+  intake.stop(coast);
   Drive.move(1000 , .45);
+  leftwing.close();
+  rightwing.close();
+  intake.stop(coast);
+  Drive.turn(32 , .2);  
+  Drive.move(-23 , .65);
+  intake.spin(fwd, 100, pct);
+  leftwing.open();
+  Drive.turn(105 , .6);
+  Drive.move(58 , 1.1);
+  Drive.turn(-30 , .8);
+  rightwing.open();
+  Drive.swingGood(46 , 1.1, .53, false);
+  intake.spin(fwd, -100, pct);
+  Drive.move(1000 , .4);
+  Drive.move(-10, .4);
+  Drive.move(1000 , .4);
+  Drive.move(-10 , .4);
+  // //turns and gets ready for the first push in the front
+  // rightwing.close();
+  // Drive.turn(210 , .8);
+  // intake.spin(fwd,100,pct);
+  // Drive.move(50 , .8);
+  // rightwing.open();
+  // Drive.turn(75 , .8);
+  // leftwing.open();
+  // intake.spin(fwd,-100,pct);
+  // //first push in the front
+  // intake.stop(coast);
+  // Drive.move(1000, .8);
+  // Drive.move(-4 , .3);
+  // Drive.move(1000 , .4);
+  // leftwing.close();
+  // rightwing.close();
+  // Drive.turn(-80, .8);
+  // Drive.move(20, .65);
+  // Drive.turn(-260, 1.2);
+  // Drive.move(15, .55);
+  // rightwing.open();
+  // leftwing.open();
+  // Drive.swingGood(35, .9, .4, false);
+  // Drive.move(1000 , .45);
   // leftwing.close();
   // rightwing.close();
   // intake.stop(coast);
@@ -333,6 +375,106 @@ void skills(){
   // Drive.move(1000 , .4);
   // Drive.move(-10 , .4);
   printf("%lu\n",(vex::timer::system()-startTime));
+
+}
+void skills () {
+    int startTime = vex::timer::system();
+  //shooting matchloads
+  kicker.spin(fwd,100,pct);
+  wait(29.9, sec);
+  // //drops intake
+  lift.open();
+  //scores 2 red triballs in the blue goal
+  Drive.turn(75 , .5);
+  kicker.stop();
+  lift.close();
+  Drive.move(-23 , .6);
+  Drive.turn(100 , .5);
+  Drive.move(-1000 , .3);
+  // readjusts and drives to the triball in the corner of the mid barrier
+  Drive.move(5 , .3);
+  Drive.turn(39 , .7);
+  intake.spin(fwd,100,pct);
+  Drive.move(51 , 1);
+  //readjusts and pushes triballs over the half bar
+  Drive.turn(-60 , .8);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.move(85 , 1.6);
+  leftwing.close();
+  rightwing.close();
+  //gets into the alley way and pushes triballs towards the goal
+  intake.spin(fwd,100,pct);
+  Drive.turn(-146 , .8);
+  Drive.move(35 , .8);
+  Drive.turn(-30 , .7);
+  Drive.move(30 , .7);
+  Drive.turn(38 , .6);
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.move(67 , 1.3);
+  // leftwing.close();
+  Drive.move(19 , .8);
+  Drive.turn(63 , .55);
+  leftwing.open();
+  Drive.move(23 , .7);
+  Drive.turn(140 , .6);
+  //readjusts and pushes into the side of the goal
+  leftwing.close();
+  Drive.turn(70 , .5);
+  Drive.move(10 , .3);
+  intake.stop(coast);
+  Drive.turn(105 , .4);
+  rightwing.open();
+  Drive.move(1000 , .6);
+  Drive.move(-5 , .4);
+  //turns and gets ready for the first push in the front
+  rightwing.close();
+  Drive.turn(210 , .6);
+  intake.spin(fwd,100,pct);
+  Drive.move(50 , .8);
+  rightwing.open();
+  Drive.turn(80 , .8);
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  //first push in the front
+  Drive.swingGood(45 , .9, .4, false);
+  intake.stop(coast);
+  Drive.move(1000 , .3);
+  Drive.turn(80 , .6);
+  leftwing.close();
+  rightwing.close();
+  Drive.move(-35 , .8);
+  intake.spin(fwd,100,pct);
+  Drive.turn(130 , .7);
+  Drive.move(25 , .6);
+  Drive.turn(80 , .65);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  Drive.swingGood(26 , .8, .42, false);
+  intake.stop(coast);
+  Drive.move(1000 , .45);
+  leftwing.close();
+  rightwing.close();
+  intake.stop(coast);
+  Drive.turn(32 , .2);  
+  Drive.move(-23 , .65);
+  intake.spin(fwd, 100, pct);
+  leftwing.open();
+  Drive.turn(105 , .6);
+  Drive.move(58 , 1.1);
+  Drive.turn(-30 , .8);
+  rightwing.open();
+  Drive.swingGood(46 , 1.1, .53, false);
+  intake.spin(fwd, -100, pct);
+  Drive.move(1000 , .4);
+  Drive.move(-10, .4);
+  Drive.move(1000 , .4);
+  Drive.move(-10 , .4);
+  printf("%lu\n",(vex::timer::system()-startTime));
+
 
 }
 //scores 6 triballs safely
@@ -510,9 +652,9 @@ void backBallDefense(){
 
 void (*autonsList[])()=
 {
-  skills,
-  sixball,
+  newskills,
   AWPDefense,
+  sixball,
   backBallDefense,
   easymidrush,
   testing,
@@ -550,13 +692,7 @@ void usercontrol()
       conToggle1 = true;
     }
 
-    // manual override to spin intake forward
-    if (con.ButtonY.pressing())
-    {
-      intake.spin(fwd, 100, pct);
-      // manual override to reverse intake
-    }
-    else if (con.ButtonL1.pressing())
+  if (con.ButtonL1.pressing())
     {
       intake.spin(reverse, 100, pct);
       // if no buttons are being pressed the toggle runs
@@ -571,7 +707,7 @@ void usercontrol()
     }
 
     // toggles the right wing on and off
-    if (con.ButtonA.pressing())
+    if (con.ButtonY.pressing())
     {
       if (f1loop)
       {
@@ -594,7 +730,7 @@ void usercontrol()
     }
 
     // toggles the left wing on and off
-    if (con.ButtonLeft.pressing())
+    if (con.ButtonRight.pressing())
     {
       if (f2loop)
       {
