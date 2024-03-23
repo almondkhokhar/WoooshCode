@@ -9,9 +9,8 @@
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // ---- END VEXCODE CONFIGURED DEVICES ----
-#include "MiniPID.cpp"
+
 #include "vex.h"
-#include "MiniPID.h"
 #include <math.h>
 #include <iostream> 
 #define Pi 3.14159265358979323846
@@ -19,7 +18,7 @@
 #define SL 5 //distance from tracking center to middle of left wheel
 #define SR 5 //distance from tracking center to middle of right wheel
 #define SS 7.75 //distance from tracking center to middle of the tracking wheel
-#define WheelDiam 3.25 //diameter of all the wheels being used for tracking
+#define WheelDiam 2.75 //diameter of all the wheels being used for tracking
 #define tpr 360  //Degrees per single encoder rotation
 double DeltaL,DeltaR,DeltaB,currentL,currentR,PreviousL,PreviousR,DeltaTheta,X,Y,Theta,DeltaXSide,DeltaYSide,SideChord,OdomHeading;
 // initializes variables
@@ -106,81 +105,6 @@ void pre_auton(void)
   //   printf("%f\t", potSelector.angle(deg));
   //   printf("%d\n", autoSelect);
   // }
-}
-double degToInch(double degrees) {
-  return ((degrees / 360) * 3.825 * 3.1416 );
-}
-void drv(double dist, double targetHeading, double maxvel, double timeout) {
-  MiniPID distControl = MiniPID(2300, 0, 0);//1150,0,3000
-  MiniPID diffControl = MiniPID(1000, 0, 0); //300 0 2000
-  distControl.reset();
-  diffControl.reset();
-  distControl.setOutputLimits(-120 * maxvel, 120 * maxvel);
-  diffControl.setOutputLimits(-120 * maxvel, 120 * maxvel);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter = 0;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-    if ((dist - degToInch(left1.position(deg) + right1.position(deg))) > 2) {
-      distControl.errorSum = 0;
-    }
-    double speed = distControl.getOutput(
-        (degToInch(left1.position(deg) + right1.position(deg)) / 2), dist);
-    double turnErr = diffControl.getOutput(Inertial.rotation(), targetHeading);
-
-    leftdrive.spin(fwd, nearbyint(speed + turnErr), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed - turnErr), voltageUnits::mV);
-
-    if (-1600 < (speed + turnErr) && (speed + turnErr) < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
-
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
-}
-void curve(double dist, double leftVel,double rightVel, double timeout) {
-  MiniPID distControl = MiniPID(1800, 0, 4500);
-  distControl.reset();
-  distControl.setOutputLimits(-12000,12000);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-  
-    double speed = distControl.getOutput((degToInch(left1.position(deg) + right1.position(deg)) / 2), dist);
-    
-
-    leftdrive.spin(fwd, nearbyint(speed*(leftVel/100)), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed*(rightVel/100)), voltageUnits::mV);
-
-    if (-1600 < speed && speed < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
-
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
 }
 void positionTracker() {
 // 2 cases could be occuring in odometry
@@ -294,42 +218,7 @@ void positionTracker() {
   }
 // Quals auton to remove ball and touch bar and shoot matchload
 // Setup: against bar, with wing deployable intake facing wall
-void curve2(double dist, double leftVel,double rightVel, double finishDist, double timeout) {
-  MiniPID distControl = MiniPID(1800, 0, 4500);
-  distControl.reset();
-  distControl.setOutputLimits(-12000,12000);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-  
-    double speed = distControl.getOutput((degToInch(left1.position(deg) + right1.position(deg)) / 2), dist/2.5);
-    
 
-    leftdrive.spin(fwd, nearbyint(speed*(leftVel/100)), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed*(rightVel/100)), voltageUnits::mV);
-    if((degToInch(left1.position(deg) + right1.position(deg)) / 2)>finishDist){
-      leftVel=100;
-      rightVel=100;
-    }
-    if (-1600 < speed && speed < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
-
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
-}
 void AWPDefense()
 {
   //removes triball
@@ -350,7 +239,7 @@ void AWPDefense()
   wait(.6 , sec);
   intake.spin(fwd,-100,pct);
   rightwing.open();
-  Drive.move(44 , 1.5);
+  Drive.move(37 , 1.5);
   wait(.5 , sec);
   rightwing.close();
   
@@ -403,119 +292,9 @@ void newskills(){
   Drive.move(1000 , .6);
   Drive.move(-7 , .5);
   rightwing.close();
-  
-  
-  // Drive.turn(210 , .6);
-  // intake.spin(fwd,100,pct);
-  // Drive.move(50 , .8);
-  // rightwing.open();
-  // Drive.turn(80 , .8);
-  // leftwing.open();
-  // intake.spin(fwd,-100,pct);
-  // //first push in the front
-  // Drive.swingGood(45 , .9, .4, false);
-  // intake.stop(coast);
-  // Drive.move(1000 , .3);
-  // Drive.turn(80 , .6);
-  // leftwing.close();
-  // rightwing.close();
-  // Drive.move(-35 , .8);
-  // intake.spin(fwd,100,pct);
-  // Drive.turn(130 , .7);
-  // Drive.move(25 , .6);
-  // Drive.turn(80 , .65);
-  // rightwing.open();
-  // leftwing.open();
-  // intake.spin(fwd,-100,pct);
-  // Drive.swingGood(26 , .8, .42, false);
-  // intake.stop(coast);
-  // Drive.move(1000 , .45);
-  // leftwing.close();
-  // rightwing.close();
-  // intake.stop(coast);
-  // Drive.turn(32 , .2);  
-  // Drive.move(-23 , .65);
-  // intake.spin(fwd, 100, pct);
-  // leftwing.open();
-  // Drive.turn(105 , .6);
-  // Drive.move(58 , 1.1);
-  // Drive.turn(-30 , .8);
-  // rightwing.open();
-  // Drive.swingGood(46 , 1.1, .53, false);
-  // intake.spin(fwd, -100, pct);
-  // Drive.move(1000 , .4);
-  // Drive.move(-10, .4);
-  // Drive.move(1000 , .4);
-  // Drive.move(-10 , .4);
-
-
-
-  Drive.turn(205 , .6);
-  intake.spin(fwd,100,pct);
-  rightwing.open();
-  Drive.move(50 , .8);
-  Drive.turn(80 , .8);
-  leftwing.open();
-  intake.spin(fwd,-100,pct);
-  //first push in the front
-  Drive.swingGood(40 , .9, .4, false);
-  intake.stop(coast);
-  Drive.move(1000 , .3);
-  Drive.move(-6, .4);
-  leftwing.close();
-  rightwing.close();
-  Drive.turn(-115, .9);
-  intake.spin(fwd,100,pct);
-  Drive.move(25, .8);
-  rightwing.open();
-  Drive.turn(-255, .9);
-  Drive.move(40, 1.2);
-  Drive.turn(-360, .7);
-  intake.stop(coast);
-  leftwing.open();
-  Drive.move(1000, 1);
-  Drive.move(-6, .4);
-  // Drive.move(1000 , .4);
-  // Drive.turn(-392 , .2);  
-  // Drive.move(-23 , .65);
-  // intake.spin(fwd, 100, pct);
-  // leftwing.open();
-  // Drive.turn(-465 , .6);
-  // Drive.move(58 , 1.1);
-  // Drive.turn(-390 , .8);
-  // rightwing.open();
-  // Drive.swingGood(46 , 1.1, .53, false);
-  // intake.spin(fwd, -100, pct); 
-  // Drive.move(1000 , .4);
-  // Drive.move(-10, .4);
-  // Drive.move(1000 , .4);
-  // Drive.move(-10 , .4);
-  // Drive.move(-35, .8);
-  // Drive.turn(-255, .7);
-  // Drive.move(36, .9);
-  // Drive.turn(-326, .65);
-  // intake.spin(fwd,100,pct);
-  // Drive.swingGood(30, .8, .4, true);
-  // rightwing.close();
-  // Drive.turn(-265, .8);
-  // Drive.move(15, .7);
-  // Drive.turn(-330 , .8);
-  // Drive.swingGood(46 , 1.1, .53, false);
-  // intake.spin(fwd, -100, pct);
-  // Drive.move(1000 , .4);
-  // Drive.move(-10, .4);
-  // Drive.move(1000 , .4);
-  // Drive.move(-10 , .4);
-
-  
-
-  
   printf("%lu\n",(vex::timer::system()-startTime));
 
 }
-
-//scores 6 triballs safely
-//Setup: intake facing neutral triball dropdown over the half bar for distance away and centered at that distance matchload in the center of the back of the bot
 void sixball() {
   int startTime = vex::timer::system();
   //picks up neutral triball
@@ -568,158 +347,26 @@ void sixball() {
   leftwing.close();
   //backs away from the goal
   Drive.move(-10 , .6);
-  // Drive.turn(320 , .7);
-  // Drive.move(90 , 1.06);
-  // dropDown.open();
   printf("%lu\n",(vex::timer::system()-startTime));
-
-
 }
-void newsixball(){
-  lift.open();
-  rightwing.open();
-  wait(.25, sec);
-  lift.close();
-  rightwing.close();
-  intake.spin(fwd, 100, pct);
-  Drive.move(57, 1.2);
-  Drive.move(-13, .6);
-  Drive.turn(96, .7);
-  intake.stop(coast);
-  Drive.move(1000, .5);
-  Drive.move(-36, .9);
-  Drive.turn(6, .65);
-
-}
-
 void doNothing(){
   //does nothing
   allmotors.stop();
   wait(1000000,sec);
 }
 void testing(){
-  curve2(10, 50, 50, 0,15);
+  Drive.move(10, 15);
   
 }
  
-void midrush(){
-  int startTime = vex::timer::system();
-  intake.spin(fwd,100,pct);
-  rightwing.open();
-  lift.open();
-  wait(.2 , sec);
-  lift.close();
-  Drive.move(59 , 1.3);
-  rightwing.close();
-  Drive.move(-6 , .4);
-  Drive.turn(95 , .5);
-  intake.stop(coast);
-  Drive.move(1000 , .6);
-  Drive.move(-15 , .6);
-  intake.spin(fwd,100,pct);
-  Drive.turn(-75 , .8);
-  Drive.move(22 , .7);
-  Drive.turn(100 , .9);
-  intake.stop(coast);
-  Drive.move(1000 , .7);
-  rightwing.close();
-  Drive.move(-10, .5);
-  Drive.turn(250, .7);
-  intake.spin(fwd,100,pct);
-  Drive.move(33, .9);
-  Drive.turn(130, .8);
-  intake.spin(fwd, -100, pct);
-  Drive.move(30 , .9);
-  Drive.turn(180, .5);
-  Drive.move(22, .9);
-  Drive.turn(280 , .8);
-  intake.spin(fwd,100,pct);
-  Drive.move(30, .9);
-  Drive.turn(285, .2);
-  Drive.move(-36 , .9);
-  Drive.turn(420 , .6);
-  rightwing.open();
-  Drive.move(20.5 , .8);
-  // turns and scores all 3 triballs
-  Drive.turn(380 , .6);
-  intake.spin(fwd,-100,pct);
-  // intake.stop(coast);
-  rightwing.open();
-  Drive.move(2000 , .5);
-  printf("%lu\n",(vex::timer::system()-startTime));
 
-
-  
-  
-
-}
-void backBallDefense(){
-  leftwing.open();
-  lift.open();
-  wait(.2,sec);
-  lift.close();
-  leftwing.close();
-  intake.spin(fwd,100,pct);
-  Drive.move(56 , 1.2);
-  Drive.move(-9 , .8);
-  Drive.turn(220 , 1);
-  Drive.move(48 , 1.3);
-  Drive.turn(135 , 1);
-  rightwing.open();
-  Drive.move(5 , .4);
-  Drive.turn(100 , .8);
-  rightwing.close();
-  Drive.move(-15 , .6);
-  Drive.turn(190 , .55);
-  Drive.move(-12 , .85);
-  Drive.move(10 , .5);
-  Drive.turn(120 , .6);
-  rightwing.open();
-  Drive.move(33 , 1);
-  Drive.turn(80 , .8);
-  intake.spin(fwd,-100,pct);
-  Drive.move(25 , 1.1);
-
-  // Drive.turn(135 , .6);
-  // Drive.move(7 , .6);
-  // Drive.turn(87 , 1);
-  // intake.spin(fwd,-100,pct);
-  // Drive.move(40 , 1);
-  // rightwing.close();
-  // Drive.move(-40 , 1);
-  // Drive.turn(130 , .7);
-  // Drive.move(-20 , 1);
-  // Drive.turn(60 , .8);
-  // Drive.move(-10 , 1);
-
-
-}
-void backMidrush(){
-  lift.open();
-  rightwing.open();
-  wait(.15, sec);
-  rightwing.close();
-  lift.close();
-  intake.spin(fwd, 100, pct);
-  Drive.move(43, 1.4);
-  // Drive.move(-10, .5);
-  // Drive.turn(90, .8);
-  // intake.spin(fwd, -100, pct);
-  // rightwing.open();
-  // leftwing.open();
-  // Drive.move(32, .9);
-
-}
 void (*autonsList[])()=
 {
   testing,
   AWPDefense,
-  backMidrush,
   doNothing,
-  sixball,
-  midrush,
   newskills,
-  backBallDefense,
+
 };
 
 void autonomous()
@@ -761,7 +408,7 @@ void usercontrol()
     if (con.ButtonL2.pressing())
     {
         kicker.spin(fwd,-100,pct);
-        //kicker2.spin(fwd, -100,pct);
+        kicker2.spin(fwd, -100,pct);
     }
     else if (con.ButtonL1.pressing())
     {
@@ -774,13 +421,13 @@ void usercontrol()
     {
       f5loop = true;
       kicker.stop();      
-      //kicker2.stop();
+      kicker2.stop();
     }
 
   if (punchythingToggle)
   {
     kicker.spin(fwd,100,pct);
-    //kicker2.spin(fwd,100,pct);
+    kicker2.spin(fwd,100,pct);
   }
     
 
