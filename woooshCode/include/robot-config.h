@@ -23,15 +23,14 @@ extern vex::motor kicker;
 extern vex::motor kicker2;
 extern vex::pneumatics leftwing;
 extern vex::pneumatics rightwing;
-extern vex::pneumatics rdropDown;
-extern vex::pneumatics ldropdown;
+extern vex::pneumatics dropDown;
 extern vex::pneumatics lift;
 extern vex::pot potSelector;
+
 extern vex::motor_group leftdrive;
 extern vex::motor_group rightdrive;
 extern vex::inertial Inertial;
 extern vex::motor_group allmotors;
 extern drivetrainObj Drive;
-
 
 #endif
