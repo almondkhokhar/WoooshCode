@@ -18,7 +18,7 @@
 #define SL 5 //distance from tracking center to middle of left wheel
 #define SR 5 //distance from tracking center to middle of right wheel
 #define SS 7.75 //distance from tracking center to middle of the tracking wheel
-#define WheelDiam 2.75 //diameter of all the wheels being used for tracking
+#define WheelDiam 3.25 //diameter of all the wheels being used for tracking
 #define tpr 360  //Degrees per single encoder rotation
 double DeltaL,DeltaR,DeltaB,currentL,currentR,PreviousL,PreviousR,DeltaTheta,X,Y,Theta,DeltaXSide,DeltaYSide,SideChord,OdomHeading;
 // initializes variables
@@ -48,8 +48,7 @@ bool conToggle4 = true;
 bool intakeToggle = false;
 bool rwingtoggle = false;
 bool lwingtoggle = false;
-bool rbwingtoggle = false;
-bool lbwingtoggle = false;
+bool bwingtoggle = false;
 bool Shoottogg = false;
 bool punchythingToggle = false;
 bool dropdowntoggle=false;
@@ -239,7 +238,7 @@ void AWPDefense()
   wait(.6 , sec);
   intake.spin(fwd,-100,pct);
   rightwing.open();
-  Drive.move(37 , 1.5);
+  Drive.move(44 , 1.5);
   wait(.5 , sec);
   rightwing.close();
   
@@ -292,9 +291,119 @@ void newskills(){
   Drive.move(1000 , .6);
   Drive.move(-7 , .5);
   rightwing.close();
+  
+  
+  // Drive.turn(210 , .6);
+  // intake.spin(fwd,100,pct);
+  // Drive.move(50 , .8);
+  // rightwing.open();
+  // Drive.turn(80 , .8);
+  // leftwing.open();
+  // intake.spin(fwd,-100,pct);
+  // //first push in the front
+  // Drive.swingGood(45 , .9, .4, false);
+  // intake.stop(coast);
+  // Drive.move(1000 , .3);
+  // Drive.turn(80 , .6);
+  // leftwing.close();
+  // rightwing.close();
+  // Drive.move(-35 , .8);
+  // intake.spin(fwd,100,pct);
+  // Drive.turn(130 , .7);
+  // Drive.move(25 , .6);
+  // Drive.turn(80 , .65);
+  // rightwing.open();
+  // leftwing.open();
+  // intake.spin(fwd,-100,pct);
+  // Drive.swingGood(26 , .8, .42, false);
+  // intake.stop(coast);
+  // Drive.move(1000 , .45);
+  // leftwing.close();
+  // rightwing.close();
+  // intake.stop(coast);
+  // Drive.turn(32 , .2);  
+  // Drive.move(-23 , .65);
+  // intake.spin(fwd, 100, pct);
+  // leftwing.open();
+  // Drive.turn(105 , .6);
+  // Drive.move(58 , 1.1);
+  // Drive.turn(-30 , .8);
+  // rightwing.open();
+  // Drive.swingGood(46 , 1.1, .53, false);
+  // intake.spin(fwd, -100, pct);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10, .4);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10 , .4);
+
+
+
+  Drive.turn(205 , .6);
+  intake.spin(fwd,100,pct);
+  rightwing.open();
+  Drive.move(50 , .8);
+  Drive.turn(80 , .8);
+  leftwing.open();
+  intake.spin(fwd,-100,pct);
+  //first push in the front
+  Drive.swingGood(40 , .9, .4, false);
+  intake.stop(coast);
+  Drive.move(1000 , .3);
+  Drive.move(-6, .4);
+  leftwing.close();
+  rightwing.close();
+  Drive.turn(-115, .9);
+  intake.spin(fwd,100,pct);
+  Drive.move(25, .8);
+  rightwing.open();
+  Drive.turn(-255, .9);
+  Drive.move(40, 1.2);
+  Drive.turn(-360, .7);
+  intake.stop(coast);
+  leftwing.open();
+  Drive.move(1000, 1);
+  Drive.move(-6, .4);
+  // Drive.move(1000 , .4);
+  // Drive.turn(-392 , .2);  
+  // Drive.move(-23 , .65);
+  // intake.spin(fwd, 100, pct);
+  // leftwing.open();
+  // Drive.turn(-465 , .6);
+  // Drive.move(58 , 1.1);
+  // Drive.turn(-390 , .8);
+  // rightwing.open();
+  // Drive.swingGood(46 , 1.1, .53, false);
+  // intake.spin(fwd, -100, pct); 
+  // Drive.move(1000 , .4);
+  // Drive.move(-10, .4);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10 , .4);
+  // Drive.move(-35, .8);
+  // Drive.turn(-255, .7);
+  // Drive.move(36, .9);
+  // Drive.turn(-326, .65);
+  // intake.spin(fwd,100,pct);
+  // Drive.swingGood(30, .8, .4, true);
+  // rightwing.close();
+  // Drive.turn(-265, .8);
+  // Drive.move(15, .7);
+  // Drive.turn(-330 , .8);
+  // Drive.swingGood(46 , 1.1, .53, false);
+  // intake.spin(fwd, -100, pct);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10, .4);
+  // Drive.move(1000 , .4);
+  // Drive.move(-10 , .4);
+
+  
+
+  
   printf("%lu\n",(vex::timer::system()-startTime));
 
 }
+
+//scores 6 triballs safely
+//Setup: intake facing neutral triball dropdown over the half bar for distance away and centered at that distance matchload in the center of the back of the bot
 void sixball() {
   int startTime = vex::timer::system();
   //picks up neutral triball
@@ -347,26 +456,160 @@ void sixball() {
   leftwing.close();
   //backs away from the goal
   Drive.move(-10 , .6);
+  // Drive.turn(320 , .7);
+  // Drive.move(90 , 1.06);
+  // dropDown.open();
   printf("%lu\n",(vex::timer::system()-startTime));
+
+
 }
+void newsixball(){
+  lift.open();
+  rightwing.open();
+  wait(.25, sec);
+  lift.close();
+  rightwing.close();
+  intake.spin(fwd, 100, pct);
+  Drive.move(57, 1.2);
+  Drive.move(-13, .6);
+  Drive.turn(96, .7);
+  intake.stop(coast);
+  Drive.move(1000, .5);
+  Drive.move(-36, .9);
+  Drive.turn(6, .65);
+
+}
+
 void doNothing(){
   //does nothing
   allmotors.stop();
   wait(1000000,sec);
 }
 void testing(){
-  Drive.move(10, 15);
+  rightwing.open();
+  intake.spin(fwd, 100, pct);
+  Drive.swingGood(30, .8, .2, false);
   
 }
  
+void midrush(){
+  int startTime = vex::timer::system();
+  intake.spin(fwd,100,pct);
+  rightwing.open();
+  lift.open();
+  wait(.2 , sec);
+  lift.close();
+  Drive.move(59 , 1.3);
+  rightwing.close();
+  Drive.move(-6 , .4);
+  Drive.turn(95 , .5);
+  intake.stop(coast);
+  Drive.move(1000 , .6);
+  Drive.move(-15 , .6);
+  intake.spin(fwd,100,pct);
+  Drive.turn(-75 , .8);
+  Drive.move(22 , .7);
+  Drive.turn(100 , .9);
+  intake.stop(coast);
+  Drive.move(1000 , .7);
+  rightwing.close();
+  Drive.move(-10, .5);
+  Drive.turn(250, .7);
+  intake.spin(fwd,100,pct);
+  Drive.move(33, .9);
+  Drive.turn(130, .8);
+  intake.spin(fwd, -100, pct);
+  Drive.move(30 , .9);
+  Drive.turn(180, .5);
+  Drive.move(22, .9);
+  Drive.turn(280 , .8);
+  intake.spin(fwd,100,pct);
+  Drive.move(30, .9);
+  Drive.turn(285, .2);
+  Drive.move(-36 , .9);
+  Drive.turn(420 , .6);
+  rightwing.open();
+  Drive.move(20.5 , .8);
+  // turns and scores all 3 triballs
+  Drive.turn(380 , .6);
+  intake.spin(fwd,-100,pct);
+  // intake.stop(coast);
+  rightwing.open();
+  Drive.move(2000 , .5);
+  printf("%lu\n",(vex::timer::system()-startTime));
 
+
+  
+  
+
+}
+void backBallDefense(){
+  leftwing.open();
+  lift.open();
+  wait(.2,sec);
+  lift.close();
+  leftwing.close();
+  intake.spin(fwd,100,pct);
+  Drive.move(56 , 1.2);
+  Drive.move(-9 , .8);
+  Drive.turn(220 , 1);
+  Drive.move(48 , 1.3);
+  Drive.turn(135 , 1);
+  rightwing.open();
+  Drive.move(5 , .4);
+  Drive.turn(100 , .8);
+  rightwing.close();
+  Drive.move(-15 , .6);
+  Drive.turn(190 , .55);
+  Drive.move(-12 , .85);
+  Drive.move(10 , .5);
+  Drive.turn(120 , .6);
+  rightwing.open();
+  Drive.move(33 , 1);
+  Drive.turn(80 , .8);
+  intake.spin(fwd,-100,pct);
+  Drive.move(25 , 1.1);
+
+  // Drive.turn(135 , .6);
+  // Drive.move(7 , .6);
+  // Drive.turn(87 , 1);
+  // intake.spin(fwd,-100,pct);
+  // Drive.move(40 , 1);
+  // rightwing.close();
+  // Drive.move(-40 , 1);
+  // Drive.turn(130 , .7);
+  // Drive.move(-20 , 1);
+  // Drive.turn(60 , .8);
+  // Drive.move(-10 , 1);
+
+
+}
+void backMidrush(){
+  lift.open();
+  rightwing.open();
+  wait(.15, sec);
+  rightwing.close();
+  lift.close();
+  intake.spin(fwd, 100, pct);
+  Drive.move(43, 1.4);
+  // Drive.move(-10, .5);
+  // Drive.turn(90, .8);
+  // intake.spin(fwd, -100, pct);
+  // rightwing.open();
+  // leftwing.open();
+  // Drive.move(32, .9);
+
+}
 void (*autonsList[])()=
 {
-  testing,
   AWPDefense,
+  backMidrush,
   doNothing,
+  sixball,
+  midrush,
   newskills,
-
+  testing,
+  backBallDefense,
 };
 
 void autonomous()
@@ -377,84 +620,43 @@ void autonomous()
 
 void usercontrol()
 {
-  //r2 intake reverse hold,
-  // r1 intake fwd hold, 
-  // l1 shoot toggle, 
-  // l2 hang hold tap to fire piston then, 
-  //y right frontwing,
-  // b right backwing,
-  // right arrow front leftwing
-  // down arrow back leftwing
   while (true)
   {
     // driving portion
     // controls the speed at which the robot moves
     positionTracker();
     Brain.Screen.render(); //push data to the LCD all at once to prevent image flickering
-    //moving controls
     rightdrive.spin(fwd, con.Axis2.value(), pct);
     leftdrive.spin(fwd, con.Axis3.value(), pct);
-    //intake controls
-    if (con.ButtonR2.pressing()){
-      intake.spin(fwd, -100, pct);
-    }
-    else if (con.ButtonR1.pressing()){
-      intake.spin(fwd, 100, pct);
-    }
-    else{
-      intake.stop(hold);
-    }
-    //kicker controls
+    // turns the intake on or off
     if (con.ButtonL2.pressing())
     {
-        kicker.spin(fwd,-100,pct);
-        kicker2.spin(fwd, -100,pct);
-    }
-    else if (con.ButtonL1.pressing())
-    {
-      if (f5loop){
-        f5loop = false;
-        punchythingToggle=!punchythingToggle;
+      if (conToggle1)
+      {
+        conToggle1 = false;
+        intakeToggle = !intakeToggle;
       }
     }
     else
     {
-      f5loop = true;
-      kicker.stop();      
-      kicker2.stop();
+      conToggle1 = true;
     }
 
-  if (punchythingToggle)
-  {
-    kicker.spin(fwd,100,pct);
-    kicker2.spin(fwd,100,pct);
-  }
-    
-
-    //leftwing control
-    if (con.ButtonRight.pressing())
+  if (con.ButtonL1.pressing())
     {
-      if (f2loop)
-      {
-        lwingtoggle = !lwingtoggle;
-      }
-      if (lwingtoggle && f2loop)
-      {
-        leftwing.open();
-        f2loop = false;
-      }
-      if (!lwingtoggle && f2loop)
-      {
-        leftwing.close();
-        f2loop = false;
-      }
+      intake.spin(reverse, 100, pct);
+      // if no buttons are being pressed the toggle runs
+    }
+    else if (intakeToggle)
+    {
+      intake.spin(fwd, 100, pct);
     }
     else
     {
-      f2loop = true;
+      intake.stop();
     }
 
-    //rightwing control
+    // toggles the right wing on and off
     if (con.ButtonY.pressing())
     {
       if (f1loop)
@@ -477,21 +679,66 @@ void usercontrol()
       f1loop = true;
     }
 
-    //right back wing control
-    if (con.ButtonB.pressing())
+    // toggles the left wing on and off
+    if (con.ButtonRight.pressing())
+    {
+      if (f2loop)
+      {
+        lwingtoggle = !lwingtoggle;
+      }
+      if (lwingtoggle && f2loop)
+      {
+        leftwing.open();
+        f2loop = false;
+      }
+      if (!lwingtoggle && f2loop)
+      {
+        leftwing.close();
+        f2loop = false;
+      }
+    }
+    else
+    {
+      f2loop = true;
+    }
+    if (con.ButtonX.pressing())
+    {
+      if (f4loop)
+      {
+        Shoottogg = !Shoottogg;
+      }
+      if (Shoottogg && f4loop)
+      {
+        lift.open();
+        f4loop = false;
+      }
+      if (!Shoottogg && f4loop)
+      {
+        lift.close();
+        f4loop = false;
+      }
+    }
+    else
+    {
+      f4loop = true;
+    }
+    // toggles both wings on or off
+    if (con.ButtonR2.pressing())
     {
       if (f3loop)
       {
-        rbwingtoggle = !rbwingtoggle;
+        bwingtoggle = !bwingtoggle;
       }
-      if (rbwingtoggle && f3loop)
+      if (bwingtoggle && f3loop)
       {
         leftwing.open();
+        rightwing.open();
         f3loop = false;
       }
-      if (!rbwingtoggle && f3loop)
+      if (!bwingtoggle && f3loop)
       {
         leftwing.close();
+        rightwing.close();
         f3loop = false;
       }
     }
@@ -500,27 +747,39 @@ void usercontrol()
       f3loop = true;
     }
 
-    //left back wing control
-    if (con.ButtonDown.pressing())
+    if (con.ButtonR1.pressing())
     {
-      if (f4loop)
-      {
-        lbwingtoggle = !lbwingtoggle;
+      if (f5loop){
+        punchythingToggle=!punchythingToggle;
       }
-      if (lbwingtoggle && f4loop)
-      {
-        leftwing.open();
-        f4loop = false;
+      if (punchythingToggle && f5loop){
+        kicker.spin(fwd,100,pct);
+        f5loop=false;
       }
-      if (!lbwingtoggle && f4loop)
-      {
-        leftwing.close();
-        f4loop = false;
+      if (!punchythingToggle && f5loop){
+        kicker.stop();
+        f5loop=false;
+      }
+
+    }
+    else {
+      f5loop = true;
+    }
+    if (con.ButtonUp.pressing()){
+      if (f6loop){
+        dropdowntoggle=!dropdowntoggle;
+      }
+      if (dropdowntoggle && f6loop){
+        dropDown.open();
+        f6loop = false;
+      }
+      if (!dropdowntoggle && f6loop){
+        dropDown.close();
+        f6loop =false;
       }
     }
-    else
-    {
-      f4loop = true;
+    else{
+      f6loop = true;
     }
   }
 }
