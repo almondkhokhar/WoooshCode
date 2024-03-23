@@ -9,9 +9,7 @@
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // ---- END VEXCODE CONFIGURED DEVICES ----
-#include "MiniPID.cpp"
 #include "vex.h"
-#include "MiniPID.h"
 #include <math.h>
 #include <iostream> 
 #define Pi 3.14159265358979323846
@@ -47,10 +45,10 @@ bool conToggle2 = true;
 bool conToggle3 = true;
 bool conToggle4 = true;
 bool intakeToggle = false;
-bool rwingtoggle = false;
-bool lwingtoggle = false;
-bool rbwingtoggle = false;
-bool lbwingtoggle = false;
+bool rwingtoggle = true;
+bool lwingtoggle = true;
+bool rbwingtoggle = true;
+bool lbwingtoggle = true;
 bool Shoottogg = false;
 bool punchythingToggle = false;
 bool dropdowntoggle=false;
@@ -106,81 +104,6 @@ void pre_auton(void)
   //   printf("%f\t", potSelector.angle(deg));
   //   printf("%d\n", autoSelect);
   // }
-}
-double degToInch(double degrees) {
-  return ((degrees / 360) * 3.825 * 3.1416 );
-}
-void drv(double dist, double targetHeading, double maxvel, double timeout) {
-  MiniPID distControl = MiniPID(2300, 0, 0);//1150,0,3000
-  MiniPID diffControl = MiniPID(1000, 0, 0); //300 0 2000
-  distControl.reset();
-  diffControl.reset();
-  distControl.setOutputLimits(-120 * maxvel, 120 * maxvel);
-  diffControl.setOutputLimits(-120 * maxvel, 120 * maxvel);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter = 0;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-    if ((dist - degToInch(left1.position(deg) + right1.position(deg))) > 2) {
-      distControl.errorSum = 0;
-    }
-    double speed = distControl.getOutput(
-        (degToInch(left1.position(deg) + right1.position(deg)) / 2), dist);
-    double turnErr = diffControl.getOutput(Inertial.rotation(), targetHeading);
-
-    leftdrive.spin(fwd, nearbyint(speed + turnErr), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed - turnErr), voltageUnits::mV);
-
-    if (-1600 < (speed + turnErr) && (speed + turnErr) < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
-
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
-}
-void curve(double dist, double leftVel,double rightVel, double timeout) {
-  MiniPID distControl = MiniPID(1800, 0, 4500);
-  distControl.reset();
-  distControl.setOutputLimits(-12000,12000);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-  
-    double speed = distControl.getOutput((degToInch(left1.position(deg) + right1.position(deg)) / 2), dist);
-    
-
-    leftdrive.spin(fwd, nearbyint(speed*(leftVel/100)), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed*(rightVel/100)), voltageUnits::mV);
-
-    if (-1600 < speed && speed < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
-
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
 }
 void positionTracker() {
 // 2 cases could be occuring in odometry
@@ -294,42 +217,8 @@ void positionTracker() {
   }
 // Quals auton to remove ball and touch bar and shoot matchload
 // Setup: against bar, with wing deployable intake facing wall
-void curve2(double dist, double leftVel,double rightVel, double finishDist, double timeout) {
-  MiniPID distControl = MiniPID(1800, 0, 4500);
-  distControl.reset();
-  distControl.setOutputLimits(-12000,12000);
-  distControl.setMaxIOutput(2000);
-  int startTime = vex::timer::system();
-  int counter;
-  left1.setPosition(0, deg);
-  right1.setPosition(0, deg);
-  while ((vex::timer::system() - startTime < timeout * 1000)) {
-  
-    double speed = distControl.getOutput((degToInch(left1.position(deg) + right1.position(deg)) / 2), dist/2.5);
-    
 
-    leftdrive.spin(fwd, nearbyint(speed*(leftVel/100)), voltageUnits::mV);
-    rightdrive.spin(fwd, nearbyint(speed*(rightVel/100)), voltageUnits::mV);
-    if((degToInch(left1.position(deg) + right1.position(deg)) / 2)>finishDist){
-      leftVel=100;
-      rightVel=100;
-    }
-    if (-1600 < speed && speed < 1600) {
-      counter++;
-      if (counter > 8) {
-        break;
-      }
-    } else {
-      counter = 0;
-    }
 
-    wait(20, msec);
-    printf("%f\t", dist - degToInch((left1.position(deg) + right1.position(deg)) / 2));
-    printf("%f\n", speed);
-  }
-  leftdrive.stop(brake);
-  rightdrive.stop(brake);
-}
 void AWPDefense()
 {
   //removes triball
@@ -598,7 +487,7 @@ void doNothing(){
   wait(1000000,sec);
 }
 void testing(){
-  curve2(10, 50, 50, 0,15);
+  
   
 }
  
