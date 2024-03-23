@@ -48,7 +48,8 @@ bool conToggle4 = true;
 bool intakeToggle = false;
 bool rwingtoggle = false;
 bool lwingtoggle = false;
-bool bwingtoggle = false;
+bool rbwingtoggle = false;
+bool lbwingtoggle = false;
 bool Shoottogg = false;
 bool punchythingToggle = false;
 bool dropdowntoggle=false;
@@ -232,9 +233,9 @@ void AWPDefense()
   kicker.stop();
   //readjusts and touches bar
   Drive.turn(-40 , 1);
-  lift.open();
+  hang.open();
   wait(.2 , sec);
-  lift.close();
+  hang.close();
   wait(.6 , sec);
   intake.spin(fwd,-100,pct);
   rightwing.open();
@@ -251,11 +252,11 @@ void newskills(){
   // kicker.spin(fwd,100,pct);
   // wait(29.8, sec);
   // //drops intake
-  lift.open();
+  hang.open();
   //scores 2 red triballs in the blue goal
   Drive.turn(75 , .5);
   kicker.stop();
-  lift.close();
+  hang.close();
   Drive.move(-23 , .6);
   Drive.turn(100 , .5);
   Drive.move(-1000 , .3);
@@ -408,9 +409,9 @@ void sixball() {
   int startTime = vex::timer::system();
   //picks up neutral triball
   intake.spin(fwd,100,pct);
-  lift.open();
+  hang.open();
   wait(.2,sec);
-  lift.close();
+  hang.close();
   wait(.2, sec);
   //drives backwards to remove the triball in the corner
   Drive.move(-38 , 1);
@@ -464,10 +465,10 @@ void sixball() {
 
 }
 void newsixball(){
-  lift.open();
+  hang.open();
   rightwing.open();
   wait(.25, sec);
-  lift.close();
+  hang.close();
   rightwing.close();
   intake.spin(fwd, 100, pct);
   Drive.move(57, 1.2);
@@ -496,9 +497,9 @@ void midrush(){
   int startTime = vex::timer::system();
   intake.spin(fwd,100,pct);
   rightwing.open();
-  lift.open();
+  hang.open();
   wait(.2 , sec);
-  lift.close();
+  hang.close();
   Drive.move(59 , 1.3);
   rightwing.close();
   Drive.move(-6 , .4);
@@ -545,9 +546,9 @@ void midrush(){
 }
 void backBallDefense(){
   leftwing.open();
-  lift.open();
+  hang.open();
   wait(.2,sec);
-  lift.close();
+  hang.close();
   leftwing.close();
   intake.spin(fwd,100,pct);
   Drive.move(56 , 1.2);
@@ -585,11 +586,11 @@ void backBallDefense(){
 
 }
 void backMidrush(){
-  lift.open();
+  hang.open();
   rightwing.open();
   wait(.15, sec);
   rightwing.close();
-  lift.close();
+  hang.close();
   intake.spin(fwd, 100, pct);
   Drive.move(43, 1.4);
   // Drive.move(-10, .5);
@@ -620,169 +621,174 @@ void autonomous()
 
 void usercontrol()
 {
-  while (true)
-  {
-    // driving portion
-    // controls the speed at which the robot moves
-    positionTracker();
-    Brain.Screen.render(); //push data to the LCD all at once to prevent image flickering
-    rightdrive.spin(fwd, con.Axis2.value(), pct);
-    leftdrive.spin(fwd, con.Axis3.value(), pct);
-    // turns the intake on or off
-    if (con.ButtonL2.pressing())
-    {
-      if (conToggle1)
-      {
-        conToggle1 = false;
-        intakeToggle = !intakeToggle;
+ //r2 intake reverse hold,
+ // r1 intake fwd hold,
+ // l1 shoot toggle,
+ // l2 hang hold tap to fire piston then,
+ //y right frontwing,
+ // b right backwing,
+ // right arrow front leftwing
+ // down arrow back leftwing
+ while (true)
+ {
+   // driving portion
+   // controls the speed at which the robot moves
+   positionTracker();
+   Brain.Screen.render(); //push data to the LCD all at once to prevent image flickering
+   //moving controls
+   rightdrive.spin(fwd, con.Axis2.value(), pct);
+   leftdrive.spin(fwd, con.Axis3.value(), pct);
+   //intake controls
+   if (con.ButtonR2.pressing()){
+     intake.spin(fwd, -100, pct);
+   }
+   else if (con.ButtonR1.pressing()){
+     intake.spin(fwd, 100, pct);
+   }
+   else{
+     intake.stop(hold);
+   }
+   //kicker controls
+   if (con.ButtonL2.pressing())
+   {
+    if (f6loop){
+      f6loop=false;
+      if (f7loop){
+        hang.open();
+        f7loop=false;
+      }
+      else{
+        kicker.spin(fwd,-100,pct);
+        kicker2.spin(fwd, -100,pct);
       }
     }
-    else
-    {
-      conToggle1 = true;
-    }
+   }
+   else if (con.ButtonL1.pressing())
+   {
+     if (f5loop){
+       f5loop = false;
+       punchythingToggle=!punchythingToggle;
+     }
+   }
+   else
+   {
+     f5loop = true;
+     kicker.stop();     
+     kicker2.stop();
+   }
+  if (!con.ButtonL2.pressing()){
+    f6loop=true;
 
-  if (con.ButtonL1.pressing())
-    {
-      intake.spin(reverse, 100, pct);
-      // if no buttons are being pressed the toggle runs
-    }
-    else if (intakeToggle)
-    {
-      intake.spin(fwd, 100, pct);
-    }
-    else
-    {
-      intake.stop();
-    }
-
-    // toggles the right wing on and off
-    if (con.ButtonY.pressing())
-    {
-      if (f1loop)
-      {
-        rwingtoggle = !rwingtoggle;
-      }
-      if (rwingtoggle && f1loop)
-      {
-        rightwing.open();
-        f1loop = false;
-      }
-      if (!rwingtoggle && f1loop)
-      {
-        rightwing.close();
-        f1loop = false;
-      }
-    }
-    else
-    {
-      f1loop = true;
-    }
-
-    // toggles the left wing on and off
-    if (con.ButtonRight.pressing())
-    {
-      if (f2loop)
-      {
-        lwingtoggle = !lwingtoggle;
-      }
-      if (lwingtoggle && f2loop)
-      {
-        leftwing.open();
-        f2loop = false;
-      }
-      if (!lwingtoggle && f2loop)
-      {
-        leftwing.close();
-        f2loop = false;
-      }
-    }
-    else
-    {
-      f2loop = true;
-    }
-    if (con.ButtonX.pressing())
-    {
-      if (f4loop)
-      {
-        Shoottogg = !Shoottogg;
-      }
-      if (Shoottogg && f4loop)
-      {
-        lift.open();
-        f4loop = false;
-      }
-      if (!Shoottogg && f4loop)
-      {
-        lift.close();
-        f4loop = false;
-      }
-    }
-    else
-    {
-      f4loop = true;
-    }
-    // toggles both wings on or off
-    if (con.ButtonR2.pressing())
-    {
-      if (f3loop)
-      {
-        bwingtoggle = !bwingtoggle;
-      }
-      if (bwingtoggle && f3loop)
-      {
-        leftwing.open();
-        rightwing.open();
-        f3loop = false;
-      }
-      if (!bwingtoggle && f3loop)
-      {
-        leftwing.close();
-        rightwing.close();
-        f3loop = false;
-      }
-    }
-    else
-    {
-      f3loop = true;
-    }
-
-    if (con.ButtonR1.pressing())
-    {
-      if (f5loop){
-        punchythingToggle=!punchythingToggle;
-      }
-      if (punchythingToggle && f5loop){
-        kicker.spin(fwd,100,pct);
-        f5loop=false;
-      }
-      if (!punchythingToggle && f5loop){
-        kicker.stop();
-        f5loop=false;
-      }
-
-    }
-    else {
-      f5loop = true;
-    }
-    if (con.ButtonUp.pressing()){
-      if (f6loop){
-        dropdowntoggle=!dropdowntoggle;
-      }
-      if (dropdowntoggle && f6loop){
-        dropDown.open();
-        f6loop = false;
-      }
-      if (!dropdowntoggle && f6loop){
-        dropDown.close();
-        f6loop =false;
-      }
-    }
-    else{
-      f6loop = true;
-    }
   }
+
+ if (punchythingToggle)
+ {
+   kicker.spin(fwd,100,pct);
+   kicker2.spin(fwd,100,pct);
+ }
+  
+
+
+   //leftwing control
+   if (con.ButtonRight.pressing())
+   {
+     if (f2loop)
+     {
+       lwingtoggle = !lwingtoggle;
+     }
+     if (lwingtoggle && f2loop)
+     {
+       leftwing.open();
+       f2loop = false;
+     }
+     if (!lwingtoggle && f2loop)
+     {
+       leftwing.close();
+       f2loop = false;
+     }
+   }
+   else
+   {
+     f2loop = true;
+   }
+
+
+   //rightwing control
+   if (con.ButtonY.pressing())
+   {
+     if (f1loop)
+     {
+       rwingtoggle = !rwingtoggle;
+     }
+     if (rwingtoggle && f1loop)
+     {
+       rightwing.open();
+       f1loop = false;
+     }
+     if (!rwingtoggle && f1loop)
+     {
+       rightwing.close();
+       f1loop = false;
+     }
+   }
+   else
+   {
+     f1loop = true;
+   }
+
+
+   //right back wing control
+   if (con.ButtonB.pressing())
+   {
+     if (f3loop)
+     {
+       rbwingtoggle = !rbwingtoggle;
+     }
+     if (rbwingtoggle && f3loop)
+     {
+       rDropDown.open();
+       f3loop = false;
+     }
+     if (!rbwingtoggle && f3loop)
+     {
+       rDropDown.close();
+       f3loop = false;
+     }
+   }
+   else
+   {
+     f3loop = true;
+   }
+
+
+   //left back wing control
+   if (con.ButtonRight.pressing())
+   {
+     if (f4loop)
+     {
+       lbwingtoggle = !lbwingtoggle;
+     }
+     if (lbwingtoggle && f4loop)
+     {
+       lDropDown.open();
+       f4loop = false;
+     }
+     if (!lbwingtoggle && f4loop)
+     {
+       lDropDown.close();
+       f4loop = false;
+     }
+   }
+   else
+   {
+     f4loop = true;
+   }
+ }
 }
+
+
+
+
 
 int main()
 {

@@ -20,10 +20,12 @@ extern vex::motor right2;
 extern vex::motor right3;
 extern vex::motor intake;
 extern vex::motor kicker;
+extern vex::motor kicker2;
 extern vex::pneumatics leftwing;
 extern vex::pneumatics rightwing;
-extern vex::pneumatics dropDown;
-extern vex::pneumatics lift;
+extern vex::pneumatics rDropDown;
+extern vex::pneumatics lDropDown;
+extern vex::pneumatics hang;
 extern vex::pot potSelector;
 
 extern vex::motor_group leftdrive;
