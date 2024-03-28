@@ -5,9 +5,15 @@ using namespace vex;
 // A global instance of brain used for printing to the V5 brain screen
 brain Brain;
 controller con;
-motor right1 = motor(PORT8, ratio6_1, true);
+// motor right1 = motor(PORT10, ratio6_1, true);
+// motor right2 = motor(PORT18, ratio6_1, true);
+// motor right3 = motor(PORT8, ratio6_1, true);
+// motor left1 = motor(PORT13, ratio6_1, false);
+// motor left2 = motor(PORT11,  ratio6_1, false);
+// motor left3 = motor(PORT1,  ratio6_1, false);
+motor right1 = motor(PORT10, ratio6_1, true);
 motor right2 = motor(PORT18, ratio6_1, true);
-motor right3 = motor(PORT10, ratio6_1, true);
+motor right3 = motor(PORT8, ratio6_1, true);
 motor left1 = motor(PORT13, ratio6_1, false);
 motor left2 = motor(PORT11,  ratio6_1, false);
 motor left3 = motor(PORT1,  ratio6_1, false);

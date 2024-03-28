@@ -81,6 +81,7 @@ void pre_auton(void)
   left1.setPosition(0, deg);
   left2.setPosition(0, deg);
   left3.setPosition(0, deg);
+  left1.resetPosition();
 
 
   //SET VALUES FOR INITIAL ROBOT POSITION
@@ -486,64 +487,31 @@ void doNothing(){
   allmotors.stop();
   wait(1000000,sec);
 }
-void testing(){
-  rightwing.open();
-  intake.spin(fwd, 100, pct);
-  Drive.swingGood(30, .8, .2, false);
+void safefs(){
+  rDropDown.open();
+  wait(.5,sec);
+  Drive.move(12,1);
+  Drive.turn(-100, 1);
+  Drive.turn(-40, 1);
+  intake.spin(fwd,-100,pct);
+  wait(.4, sec);
+  Drive.move(10000000, 1);
+  Drive.move(-10, 1);
+  rDropDown.close();
+
   
+}
+void safens(){
+  rDropDown.open();
+  Drive.turn(-100, 1.3);
+  rDropDown.close();
+  Drive.turn(-38, .7);
+  intake.spin(fwd,-100,pct);
+  Drive.move(47, 3);
+
 }
  
-void midrush(){
-  int startTime = vex::timer::system();
-  intake.spin(fwd,100,pct);
-  rightwing.open();
-  hang.open();
-  wait(.2 , sec);
-  hang.close();
-  Drive.move(59 , 1.3);
-  rightwing.close();
-  Drive.move(-6 , .4);
-  Drive.turn(95 , .5);
-  intake.stop(coast);
-  Drive.move(1000 , .6);
-  Drive.move(-15 , .6);
-  intake.spin(fwd,100,pct);
-  Drive.turn(-75 , .8);
-  Drive.move(22 , .7);
-  Drive.turn(100 , .9);
-  intake.stop(coast);
-  Drive.move(1000 , .7);
-  rightwing.close();
-  Drive.move(-10, .5);
-  Drive.turn(250, .7);
-  intake.spin(fwd,100,pct);
-  Drive.move(33, .9);
-  Drive.turn(130, .8);
-  intake.spin(fwd, -100, pct);
-  Drive.move(30 , .9);
-  Drive.turn(180, .5);
-  Drive.move(22, .9);
-  Drive.turn(280 , .8);
-  intake.spin(fwd,100,pct);
-  Drive.move(30, .9);
-  Drive.turn(285, .2);
-  Drive.move(-36 , .9);
-  Drive.turn(420 , .6);
-  rightwing.open();
-  Drive.move(20.5 , .8);
-  // turns and scores all 3 triballs
-  Drive.turn(380 , .6);
-  intake.spin(fwd,-100,pct);
-  // intake.stop(coast);
-  rightwing.open();
-  Drive.move(2000 , .5);
-  printf("%lu\n",(vex::timer::system()-startTime));
 
-
-  
-  
-
-}
 void backBallDefense(){
   leftwing.open();
   hang.open();
@@ -601,15 +569,19 @@ void backMidrush(){
   // Drive.move(32, .9);
 
 }
+void testing(){
+  Drive.move(15, 15);
+}
 void (*autonsList[])()=
 {
+  testing,
+  doNothing,
+  safefs,
+  safens,
   AWPDefense,
   backMidrush,
-  doNothing,
   sixball,
-  midrush,
   newskills,
-  testing,
   backBallDefense,
 };
 
@@ -618,7 +590,24 @@ void autonomous()
   autonsList[autoSelect]();
 }
 
-
+int conInfo(){
+  while (true){
+  con.Screen.clearScreen();
+  con.Screen.setCursor(1,1);
+  con.Screen.print("Battery:");
+  con.Screen.print(Brain.Battery.capacity(percent));
+  con.Screen.setCursor(2,1);
+  con.Screen.print("Left  ");
+  con.Screen.print((left1.temperature(fahrenheit)+left2.temperature(fahrenheit)+left3.temperature(fahrenheit))/3);
+  con.Screen.setCursor(3,1);
+  con.Screen.print("Right  ");
+  con.Screen.print((right1.temperature(fahrenheit)+right2.temperature(fahrenheit)+right3.temperature(fahrenheit))/3);
+  con.Screen.setCursor(3,15);
+  con.Screen.print(Brain.timer(sec));
+  wait(1, sec);
+  }
+  return(0);
+}
 void usercontrol()
 {
  //r2 intake reverse hold,
@@ -629,6 +618,7 @@ void usercontrol()
  // b right backwing,
  // right arrow front leftwing
  // down arrow back leftwing
+ task printcon = task(conInfo);
  while (true)
  {
    // driving portion
@@ -655,6 +645,7 @@ void usercontrol()
       f6loop=false;
       if (f7loop){
         hang.open();
+        con.rumble(".....-----");
         f7loop=false;
       }
       else{
