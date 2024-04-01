@@ -10,13 +10,12 @@ drivetrainObj::drivetrainObj(double wheelDiameterInput, double gearLPlusRatioInp
 
 double drivetrainObj::getLeftEncoderValue()
 {
-    return left1.position(deg);
+  return leftdrive.position(deg);
 }
 
 double drivetrainObj::getRightEncoderValue()
 {
-  right1.resetPosition();
-    return rightdrive.position(deg);
+  return rightdrive.position(deg);
 }
 
 double drivetrainObj::getEncoderValue()
@@ -26,32 +25,35 @@ double drivetrainObj::getEncoderValue()
 
 void drivetrainObj::move(double targetDistance, double timeout)
 {
-  left1.resetPosition();
-  double distKp = 3.9;
-
+  double distKp = 500.0;
+  double turnKp = 300.0;
+  double wheelDiameter = 2.75;
   // establishes when we started the procedure
   // records a starting position of the bot
   // records a starting position of the bot
   double startAng = Inertial.rotation(deg);
+  double startPos = Drive.getEncoderValue();
   int startTime = vex::timer::system();
+
   // limits the time the procedure can run
-  double speed1, turnErr;
-  printf("%f\n",Drive.getLeftEncoderValue());
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    double inRem=targetDistance-Drive.getLeftEncoderValue()* 3.14159265359/180 *1.6;
-    speed1= inRem*distKp;
+    double currentDistance = (Drive.getEncoderValue() - startPos) * M_PI / 180 * wheelDiameter / 2;
+    double error = targetDistance - currentDistance;
 
-    //printf("%f\n",speed1);
-    printf("%f\n",inRem);
-    //printf("%f\n",Drive.getLeftEncoderValue());
     // calculates the difference between our current angle and our initial angle
-    turnErr = startAng - Inertial.rotation(deg);
+    double turnErr = startAng - Inertial.rotation(deg);
+
+    double speed = error * distKp;
+    double turnSpeed = turnErr * turnKp;
+
     // set the drive to the correct speed
-    rightdrive.spin(fwd, speed1 - turnErr*.0, pct);
-    leftdrive.spin(fwd, speed1 + turnErr*.0, pct);
-    wait(10, msec);
+    rightdrive.spin(fwd, speed - turnSpeed, vex::voltageUnits::mV);
+    leftdrive.spin(fwd, speed + turnSpeed, vex::voltageUnits::mV);
+    printf("%f\n", turnErr);
+
+    wait(20, msec);
   }
   leftdrive.stop(brake);
   rightdrive.stop(brake);
