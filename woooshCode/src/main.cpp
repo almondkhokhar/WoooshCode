@@ -332,17 +332,83 @@ void backBallDefense(){
   intake.spin(fwd,-100,pct);
   Drive.move(25 , 1.1);
 }
+
+
+
+//new autons
+
+void fiveMidFar() {
+  int startTime = vex::timer::system();
+  intake.spin(fwd, 100, pct);
+  Drive.move(48, .9);
+  Drive.move(-5, .4);
+  Drive.turn(94, .9);
+  intake.spin(fwd, -100, pct);
+  wait(.3, sec);
+  Drive.move(1000, .4);
+  Drive.move(-39, .9);
+  Drive.turn(224, .9);
+  intake.spin(fwd, 100, pct);
+  Drive.move(13, .7);
+  Drive.turn(127, .8);
+  Drive.move(53, 1.2);
+  Drive.turn(15, .8);
+  intake.spin(fwd, -100, pct);
+  wait(.4,sec);
+  Drive.move(1000, .5);
+  Drive.move(-19, .7);
+  Drive.turn(60, .6);
+  rDropDown.open();
+  Drive.turn(0, .7);
+  wait(.3,sec);
+  Drive.turn(-100,.8);
+  Drive.move(36, .9);
+  Drive.turn(-90, .4);
+  Drive.move(27, .8);
+  intake.spin(fwd, 100, pct);
+
+  Drive.move(-38 , .8);
+  Drive.turn(50 , .6);
+  printf("%lu\n",(vex::timer::system()-startTime));
+}
+
+void fourMidNear(){
+  intake.spin(fwd,100,pct);
+  Drive.move(49, 1.2);
+  Drive.move(-54, 1.2);
+  Drive.turn(70, 1);
+  intake.spin(fwd, -100, pct);
+  Drive.turn(100, .8);
+  Drive.move(-28, 1);
+  Drive.turn(130, .8);
+  Drive.move(25, 1);
+  rDropDown.open();
+  Drive.turn(70, .8);
+  rDropDown.close();
+  Drive.turn(130, .8);
+  Drive.move(-30, 1);
+  Drive.turn(170, .8);
+  Drive.move(-7.5, .6);
+  Drive.turn(120, .8);
+  rightwing.open();
+  Drive.move(37, 1);
+  Drive.turn(80, .6);
+  Drive.move(28, .8);
+  rightwing.close();
+}
 void testing() {
   Drive.move(30, 15);
 }
 
 void (*autonsList[])()=
 {
+  fourMidNear,
+  fiveMidFar,
+  AWPDefense,
   testing,
   doNothing,
   safefs,
   safens,
-  AWPDefense,
   sixball,
   newskills,
   backBallDefense,

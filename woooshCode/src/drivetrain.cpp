@@ -26,7 +26,7 @@ double drivetrainObj::getEncoderValue()
 void drivetrainObj::move(double targetDistance, double timeout)
 {
   double distKp = 500.0;
-  double turnKp = 300.0;
+  double turnKp = 350.0;
   double wheelDiameter = 2.75;
   // establishes when we started the procedure
   // records a starting position of the bot
