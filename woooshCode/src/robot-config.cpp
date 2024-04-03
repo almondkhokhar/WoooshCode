@@ -11,21 +11,14 @@ motor right3 = motor(PORT8, ratio6_1, true);
 motor left1 = motor(PORT13, ratio6_1, false);
 motor left2 = motor(PORT11,  ratio6_1, false);
 motor left3 = motor(PORT1,  ratio6_1, false);
-// motor right1 = motor(PORT10, ratio6_1, true);
-// motor right2 = motor(PORT18, ratio6_1, true);
-// motor right3 = motor(PORT8, ratio6_1, true);
-// motor left1 = motor(PORT13, ratio6_1, false);
-// motor left2 = motor(PORT11,  ratio6_1, false);
-// motor left3 = motor(PORT1,  ratio6_1, false);
 motor kicker = motor(PORT12, true);
 motor kicker2 = motor(PORT20, false);
 motor intake = motor(PORT19, false);
-pneumatics rightwing = pneumatics(Brain.ThreeWirePort.E);
-pneumatics leftwing = pneumatics(Brain.ThreeWirePort.C);
-pneumatics rDropDown = pneumatics(Brain.ThreeWirePort.B);
-pneumatics lDropDown = pneumatics(Brain.ThreeWirePort.D);
-pneumatics hang = pneumatics(Brain.ThreeWirePort.A);
-pot potSelector = pot(Brain.ThreeWirePort.C);
+pneumatics rightwing = pneumatics(Brain.ThreeWirePort.A);
+pneumatics leftwing = pneumatics(Brain.ThreeWirePort.B);
+pneumatics rDropDown = pneumatics(Brain.ThreeWirePort.C);
+pneumatics hang = pneumatics(Brain.ThreeWirePort.D);
+pot potSelector = pot(Brain.ThreeWirePort.E);
 
 
 motor_group leftdrive(left1, left2, left3);

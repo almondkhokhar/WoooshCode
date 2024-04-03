@@ -72,7 +72,7 @@ void drivetrainObj::swingGood(double targetDistance, double timeout, double turn
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed2 = (targetDistance - ((right1.position(deg) + left1.position(deg)) / 2.0 - startPos) * 3.14159 / 180 * 3.25) * distKp;
+    speed2 = (Drive.getEncoderValue() - startPos) * M_PI / 180 * wheelDiameter / 2 * distKp;
     // set the drive to the correct speed
     if (RightSide) {
       rightdrive.spin(fwd, speed2 * turnMult, pct);

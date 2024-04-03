@@ -337,8 +337,21 @@ void backBallDefense(){
 
 //new autons
 
+int lfQuickfire(){
+  leftwing.open();
+  wait(.2, sec);
+  leftwing.close();
+  return (0);
+}
+int rfQuickfire(){
+  rightwing.open();
+  wait(.2, sec);
+  rightwing.close();
+  return (0);
+}
 void fiveMidFar() {
   int startTime = vex::timer::system();
+  task rwing = task(rfQuickfire);
   intake.spin(fwd, 100, pct);
   Drive.move(48, .9);
   Drive.move(-5, .4);
@@ -350,29 +363,31 @@ void fiveMidFar() {
   Drive.turn(224, .9);
   intake.spin(fwd, 100, pct);
   Drive.move(13, .7);
-  Drive.turn(127, .8);
-  Drive.move(53, 1.2);
-  Drive.turn(15, .8);
+  Drive.turn(140, .8);
+  Drive.move(51, 1.2);
+  Drive.turn(55, .8);
+  rDropDown.open();
+  Drive.move(10, .5);
+  Drive.turn(0, .7);
   intake.spin(fwd, -100, pct);
   wait(.4,sec);
   Drive.move(1000, .5);
   Drive.move(-19, .7);
   Drive.turn(60, .6);
-  rDropDown.open();
   Drive.turn(0, .7);
   wait(.3,sec);
   Drive.turn(-100,.8);
   Drive.move(36, .9);
   Drive.turn(-90, .4);
-  Drive.move(27, .8);
-  intake.spin(fwd, 100, pct);
+  // Drive.move(27, .8);
+  // intake.spin(fwd, 100, pct);
 
-  Drive.move(-38 , .8);
-  Drive.turn(50 , .6);
+  // Drive.move(-38 , .8);
+  // Drive.turn(50 , .6);
   printf("%lu\n",(vex::timer::system()-startTime));
 }
-
 void fourMidNear(){
+  task lwing = task(lfQuickfire);
   intake.spin(fwd,100,pct);
   Drive.move(49, 1.2);
   Drive.move(-54, 1.2);
@@ -383,17 +398,20 @@ void fourMidNear(){
   Drive.turn(130, .8);
   Drive.move(25, 1);
   rDropDown.open();
-  Drive.turn(70, .8);
+  Drive.turn(30, .8);
   rDropDown.close();
-  Drive.turn(130, .8);
-  Drive.move(-30, 1);
+  Drive.turn(120, .8);
+  Drive.move(-27, 1);
   Drive.turn(170, .8);
-  Drive.move(-7.5, .6);
+  rDropDown.open();
+  Drive.move(-5, .6);
+  Drive.move(5, .4);
+  rDropDown.close();
   Drive.turn(120, .8);
   rightwing.open();
-  Drive.move(37, 1);
+  Drive.move(39, 1);
   Drive.turn(80, .6);
-  Drive.move(28, .8);
+  Drive.move(23, .8);
   rightwing.close();
 }
 void testing() {
@@ -402,8 +420,8 @@ void testing() {
 
 void (*autonsList[])()=
 {
-  fourMidNear,
   fiveMidFar,
+  fourMidNear,
   AWPDefense,
   testing,
   doNothing,
@@ -431,8 +449,6 @@ int conInfo(){
   con.Screen.setCursor(3,1);
   con.Screen.print("Right  ");
   con.Screen.print((right1.temperature(fahrenheit)+right2.temperature(fahrenheit)+right3.temperature(fahrenheit))/3);
-  con.Screen.setCursor(3,15);
-  con.Screen.print(Brain.timer(sec));
   wait(1, sec);
   }
   return(0);
@@ -466,13 +482,15 @@ void usercontrol()
      intake.stop(hold);
    }
    //kicker controls
-   if (con.ButtonL2.pressing())
+  
+
+    if (con.ButtonL2.pressing())
    {
     if (f6loop){
       f6loop=false;
       if (f7loop){
         hang.open();
-        con.rumble(".....-----");
+        con.rumble(".-..--.--..");
         f7loop=false;
       }
       else{
@@ -480,30 +498,30 @@ void usercontrol()
         kicker2.spin(fwd, -100,pct);
       }
     }
-   }
-   else if (con.ButtonL1.pressing())
-   {
-     if (f5loop){
-       f5loop = false;
-       punchythingToggle=!punchythingToggle;
-     }
-   }
-   else
-   {
-     f5loop = true;
-     kicker.stop();     
-     kicker2.stop();
-   }
-  if (!con.ButtonL2.pressing()){
-    f6loop=true;
-
-  }
-
- if (punchythingToggle)
- {
-   kicker.spin(fwd,100,pct);
-   kicker2.spin(fwd,100,pct);
- }
+    }
+    else if (con.ButtonL1.pressing())
+    {
+      if (f5loop){
+        f5loop = false;
+        punchythingToggle=!punchythingToggle;
+      }
+    }
+    else
+    {
+      f5loop = true;
+    }
+    if (!con.ButtonL2.pressing()){
+      f6loop=true;
+    }
+    if (punchythingToggle)
+    {
+      kicker.spin(fwd,100,pct);
+      kicker2.spin(fwd,100,pct);
+    }
+    else if (!con.ButtonL2.pressing()) {
+      kicker.stop();
+      kicker2.stop();
+    }
   
 
 
@@ -576,30 +594,6 @@ void usercontrol()
    else
    {
      f3loop = true;
-   }
-
-
-   //left back wing control
-   if (con.ButtonRight.pressing())
-   {
-     if (f4loop)
-     {
-       lbwingtoggle = !lbwingtoggle;
-     }
-     if (lbwingtoggle && f4loop)
-     {
-       lDropDown.open();
-       f4loop = false;
-     }
-     if (!lbwingtoggle && f4loop)
-     {
-       lDropDown.close();
-       f4loop = false;
-     }
-   }
-   else
-   {
-     f4loop = true;
    }
  }
 }
