@@ -77,44 +77,21 @@ void pre_auton(void)
   con.Screen.print("Ready");
 
   //Auton selector with potentiometer
-
-  // double potMax = 250;
-  // double potMin = 0;
-  // double frac;
-  // while (!Competition.isDriverControl())
-  // {
-  //   frac = (potSelector.angle(deg) - potMin) / (potMax - potMin);
-  //   autoSelect = floor(frac / (1.0 / autoNum))+1;
-  //   con.Screen.clearScreen();
-  //   con.Screen.setCursor(1,1);
-  //   con.Screen.print(autoSelect);
-  //   Brain.Screen.print(autoSelect);
-  //   printf("%f\t", potSelector.angle(deg));
-  //   printf("%d\n", autoSelect);
-  // }
 }
 
 void AWPDefense()
 {
   //removes triball
-  rightwing.open();
+  rDropDown.open();
   Drive.move(5 , .3);
-  Drive.turn(-40 , 1.2);
-  rightwing.close();
+  Drive.turn(-39 , 1.2);
+  rDropDown.close();
   //Shoots matchload
-  Drive.turn(-75 , 1);
-  kicker.spin(fwd,100,pct);
-  wait(1.5 , sec);
-  kicker.stop();
-  //readjusts and touches bar
-  Drive.turn(-40 , 1);
-  hang.open();
-  wait(.2 , sec);
-  hang.close();
   wait(.6 , sec);
   intake.spin(fwd,-100,pct);
+  wait(7, sec);
   rightwing.open();
-  Drive.move(44 , 1.5);
+  Drive.move(42 , 2);
   wait(.5 , sec);
   rightwing.close();
   
@@ -196,113 +173,11 @@ void newskills(){
 
 }
 
-//scores 6 triballs safely
-//Setup: intake facing neutral triball dropdown over the half bar for distance away and centered at that distance matchload in the center of the back of the bot
-void sixball() 
-{
-  int startTime = vex::timer::system();
-  //picks up neutral triball
-  intake.spin(fwd,100,pct);
-  hang.open();
-  wait(.2,sec);
-  hang.close();
-  wait(.2, sec);
-  //drives backwards to remove the triball in the corner
-  Drive.move(-38 , 1);
-  Drive.turn(150 , .6);
-  rightwing.open();
-  Drive.move(18.5 , .8);
-  // turns and scores all 3 triballs
-  Drive.turn(99 , 1);
-  intake.spin(fwd,-100,pct);
-  // intake.stop(coast);
-  rightwing.open();
-  Drive.move(2000 , .5);
-  Drive.move(-10 , .3);
-  Drive.move(2000 , .4);
-  Drive.move(-10 , .5);
-  rightwing.close();
-  //turns to score triball on mid bar only in our zone
-  Drive.turn(16.5 , .85);
-  intake.spin(fwd,100,pct);
-  Drive.move(52 , 1.05);
-  //turns and uses wings to score the triball in the intake and the triball in the center
-  Drive.turn(110 , .65);
-  Drive.move(16 , .6);
-  intake.stop(coast);
-  Drive.turn(180 , .45);
-  leftwing.open();
-  intake.spin(fwd,-100,pct);
-  // intake.stop(coast);
-  Drive.move(10000 , .7);
-  //reverses to get the last triball and score it
-  Drive.move(-15 , .6);
-  leftwing.close();
-  Drive.turn(9 , .75);
-  intake.spin(fwd,100,pct);
-  Drive.move(21 , .7);
-  Drive.turn(190 , .8);
-  intake.spin(fwd,-100,pct);
-  // intake.stop(coast);
-  rightwing.open();
-  leftwing.open();
-  Drive.move(1000 , .6);
-  rightwing.close();
-  leftwing.close();
-  //backs away from the goal
-  Drive.move(-10 , .6);
-  // Drive.turn(320 , .7);
-  // Drive.move(90 , 1.06);
-  // dropDown.open();
-  printf("%lu\n",(vex::timer::system()-startTime));
-
-
-}
-void newsixball()
-{
-  hang.open();
-  rightwing.open();
-  wait(.25, sec);
-  hang.close();
-  rightwing.close();
-  intake.spin(fwd, 100, pct);
-  Drive.move(57, 1.2);
-  Drive.move(-13, .6);
-  Drive.turn(96, .7);
-  intake.stop(coast);
-  Drive.move(1000, .5);
-  Drive.move(-36, .9);
-  Drive.turn(6, .65);
-}
 
 void doNothing(){
   //does nothing
 }
 
-void safefs()
-{
-  rDropDown.open();
-  wait(.5,sec);
-  Drive.move(12,1);
-  Drive.turn(-100, 1);
-  Drive.turn(-40, 1);
-  intake.spin(fwd,-100,pct);
-  wait(.4, sec);
-  Drive.move(10000000, 1);
-  Drive.move(-10, 1);
-  rDropDown.close();
-}
-
-void safens()
-{
-  rDropDown.open();
-  Drive.turn(-100, 1.3);
-  rDropDown.close();
-  Drive.turn(-38, .7);
-  intake.spin(fwd,-100,pct);
-  Drive.move(47, 3);
-
-}
  
 
 void backBallDefense(){
@@ -343,91 +218,152 @@ int lfQuickfire(){
   leftwing.close();
   return (0);
 }
+int lfSlow(){
+  wait(.2, sec);
+  leftwing.open();
+  return(0);
+}
 int rfQuickfire(){
   rightwing.open();
   wait(.2, sec);
   rightwing.close();
   return (0);
 }
+int slowDrop(){
+  wait(.2, sec);
+  rDropDown.open();
+  return(0);
+}
 void fiveMidFar() {
   int startTime = vex::timer::system();
   task rwing = task(rfQuickfire);
   intake.spin(fwd, 100, pct);
-  Drive.move(48, .9);
+  Drive.move(48, 1);
   Drive.move(-5, .4);
-  Drive.turn(94, .9);
+  intake.stop();
+  Drive.turn(97, .7);
   intake.spin(fwd, -100, pct);
   wait(.3, sec);
-  Drive.move(1000, .4);
-  Drive.move(-39, .9);
-  Drive.turn(224, .9);
-  intake.spin(fwd, 100, pct);
-  Drive.move(13, .7);
-  Drive.turn(140, .8);
-  Drive.move(51, 1.2);
-  Drive.turn(55, .8);
-  rDropDown.open();
-  Drive.move(10, .5);
-  Drive.turn(0, .7);
-  intake.spin(fwd, -100, pct);
-  wait(.4,sec);
   Drive.move(1000, .5);
-  Drive.move(-19, .7);
-  Drive.turn(60, .6);
-  Drive.turn(0, .7);
-  wait(.3,sec);
-  Drive.turn(-100,.8);
-  Drive.move(36, .9);
-  Drive.turn(-90, .4);
-  // Drive.move(27, .8);
-  // intake.spin(fwd, 100, pct);
+  //leftwing.close();
+  Drive.move(-37, .7);
+  intake.spin(fwd, 100, pct);
+  Drive.turn(230, .9);
+  Drive.move(17, .6);
+  Drive.turn(145, .7);
+  intake.stop();
+  Drive.move(51, 1.1);
+  Drive.turn(55, .6);
+  rDropDown.open();
+  Drive.move(17, .6);
+  Drive.turn(0, .5);
+  rDropDown.close();
+  intake.spin(fwd,-100, pct);
+  wait(.2, sec);
+  Drive.turn(10, .3);
+  Drive.move(1000, .6);
+  Drive.move(-10, .4);
+  Drive.turn(10, .3);
+  Drive.move(1000, .5);
+  Drive.move(-20, .6);
+  Drive.turn(-110, .7);
+  Drive.move(40, .9);
+  Drive.turn(-70, .4);
+  intake.spin(fwd,100, pct);
+  Drive.move(24, .6);
 
-  // Drive.move(-38 , .8);
-  // Drive.turn(50 , .6);
+
+  
   printf("%lu\n",(vex::timer::system()-startTime));
 }
 void fourMidNear(){
+  int startTime = vex::timer::system();
   task lwing = task(lfQuickfire);
   intake.spin(fwd,100,pct);
-  Drive.move(49, 1.2);
+  Drive.move(49, 1);
   Drive.move(-54, 1.2);
   Drive.turn(70, 1);
   intake.spin(fwd, -100, pct);
   Drive.turn(100, .8);
-  Drive.move(-28, 1);
+  leftwing.open();
+  Drive.move(-28, .7);
+  leftwing.close();
   Drive.turn(130, .8);
-  Drive.move(25, 1);
-  rDropDown.open();
+  task dropSlow = task(slowDrop);
+  Drive.move(25, .7);
   Drive.turn(30, .8);
   rDropDown.close();
   Drive.turn(120, .8);
-  Drive.move(-27, 1);
+  Drive.move(-20, .7);
   Drive.turn(170, .8);
   rDropDown.open();
-  Drive.move(-5, .6);
+  Drive.move(-15, .6);
   Drive.move(5, .4);
   rDropDown.close();
   Drive.turn(120, .8);
   rightwing.open();
-  Drive.move(39, 1);
-  Drive.turn(80, .6);
-  Drive.move(23, .8);
+  Drive.move(36, .8);
+  Drive.turn(80, .7);
   rightwing.close();
+  Drive.move(29, .8);
+  Drive.turn(77, .4);
+  Drive.move(-40, .8);
+  Drive.turn(130, .4);
+  printf("%lu\n",(vex::timer::system()-startTime));
+}
+
+void fiveMidNear(){
+  int startTime = vex::timer::system();
+  task lwing = task(lfQuickfire);
+  intake.spin(fwd,100,pct);
+  Drive.move(50, 1);
+  Drive.turn(80, .6);
+  task slowlwing = task(lfSlow);
+  Drive.move(23, .7);
+  intake.stop();
+  Drive.turn(75, .5);
+  Drive.move(-20, .7);
+  Drive.turn(190, .8);
+  leftwing.close();
+  Drive.move(53, 1.1);
+  Drive.turn(100, .6);
+  Drive.move(-24, .7);
+  Drive.turn(167, .6);
+  rDropDown.open();
+  Drive.move(-17.6, .6);
+  Drive.turn(167, .3);
+  rDropDown.close();
+  Drive.move(20, .7);
+  Drive.turn(130, .6);
+  task dropSlow = task(slowDrop);
+  Drive.move(16.5, .6);
+  Drive.turn(45, .4);
+  wait(.5, sec);
+  Drive.turn(130, .5);
+  rDropDown.close();
+  Drive.move(12, .6);
+  Drive.turn(75, .6);
+  intake.spin(fwd, -100, pct);
+  Drive.move(35, .9);
+  Drive.turn(77, .3);
+  Drive.move(-40, .8);
+  Drive.turn(130, .4);
+ 
+  printf("%lu\n",(vex::timer::system()-startTime));
+
 }
 void testing() {
-  Drive.move(30, 15);
+  Drive.turn(45, 15);
 }
 
 void (*autonsList[])()=
 {
   fiveMidFar,
+  doNothing, 
   fourMidNear,
+  fiveMidNear,
   AWPDefense,
   testing,
-  doNothing,
-  safefs,
-  safens,
-  sixball,
   newskills,
   backBallDefense,
 };
@@ -482,7 +418,6 @@ void usercontrol()
      intake.stop(hold);
    }
    //kicker controls
-  
 
     if (con.ButtonL2.pressing())
    {

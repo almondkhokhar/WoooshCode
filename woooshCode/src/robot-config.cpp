@@ -23,7 +23,8 @@ pot potSelector = pot(Brain.ThreeWirePort.E);
 
 motor_group leftdrive(left1, left2, left3);
 motor_group rightdrive(right1, right2, right3);
-inertial Inertial = inertial(PORT14);
+inertial Inertial = inertial(PORT2);
+inertial Inert2 = inertial(PORT7);
 motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, kicker, kicker2);
 drivetrainObj Drive(2.75, 1);
 /**

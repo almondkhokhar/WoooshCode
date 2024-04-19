@@ -31,6 +31,7 @@ extern vex::pot potSelector;
 extern vex::motor_group leftdrive;
 extern vex::motor_group rightdrive;
 extern vex::inertial Inertial;
+extern vex::inertial Inert2;
 extern vex::motor_group allmotors;
 extern drivetrainObj Drive;
 
