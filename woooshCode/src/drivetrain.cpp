@@ -58,29 +58,29 @@ void drivetrainObj::move(double targetDistance, double timeout)
   rightdrive.stop(brake);
 }
 
-void drivetrainObj::swingGood(double targetDistance, double timeout, double turnMult, bool RightSide)
+void drivetrainObj::swing(double targetDistance, double timeout, double turnMult, double distKp, bool RightSide)
 {
-  double distKp = 3.9;
+
   // establishes when we started the procedure
   // records a starting position of the bot
   double startPos = (right1.position(deg) + left1.position(deg)) / 2.0;
   // records a starting position of the bot 
   int startTime = vex::timer::system();
   // limits the time the procedure can run
-  double speed2;
   while (vex::timer::system() - startTime < timeout * 1000)
   {
     // limits the speed so as the robot gets closer to where you want it it slows down the speed and doesn't overshoot the distance
-    speed2 = (Drive.getEncoderValue() - startPos) * M_PI / 180 * wheelDiameter / 2 * distKp;
+    double speed = (targetDistance - (Drive.getEncoderValue() - startPos) * M_PI / 180 * wheelDiameter / 2) * distKp;
     // set the drive to the correct speed
     if (RightSide) {
-      rightdrive.spin(fwd, speed2 * turnMult, pct);
-      leftdrive.spin(fwd, speed2, pct);
+      rightdrive.spin(fwd, speed * turnMult, pct);
+      leftdrive.spin(fwd, speed, pct);
     }
     else
     {
-      rightdrive.spin(fwd, speed2, pct); 
-      leftdrive.spin(fwd, speed2 * turnMult, pct);
+      rightdrive.spin(fwd, speed, pct); 
+      leftdrive.spin(fwd, speed * turnMult, pct);
+
     }
     
     wait(10, msec);

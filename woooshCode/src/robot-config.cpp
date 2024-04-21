@@ -13,7 +13,7 @@ motor left2 = motor(PORT11,  ratio6_1, false);
 motor left3 = motor(PORT1,  ratio6_1, false);
 motor kicker = motor(PORT12, true);
 motor kicker2 = motor(PORT20, false);
-motor intake = motor(PORT19, false);
+motor intake = motor(PORT7 , false);
 pneumatics rightwing = pneumatics(Brain.ThreeWirePort.A);
 pneumatics leftwing = pneumatics(Brain.ThreeWirePort.B);
 pneumatics rDropDown = pneumatics(Brain.ThreeWirePort.C);
@@ -24,7 +24,7 @@ pot potSelector = pot(Brain.ThreeWirePort.E);
 motor_group leftdrive(left1, left2, left3);
 motor_group rightdrive(right1, right2, right3);
 inertial Inertial = inertial(PORT2);
-inertial Inert2 = inertial(PORT7);
+inertial Inert2 = inertial(PORT8);
 motor_group allmotors(left1, left2, left3, right1, right2, right3, intake, kicker, kicker2);
 drivetrainObj Drive(2.75, 1);
 /**

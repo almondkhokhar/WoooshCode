@@ -12,8 +12,7 @@ class drivetrainObj
         double getEncoderValue();
         void move(double targetDistance, double timeout);
         void turn(double targetAngle, double timeout);
-        void swing(double targetAngle, double targetDistance, double timeout, bool rightTurn);
-        void swingGood(double targetDistance, double timeout, double turnMult, bool RightSide);
+        void swing(double targetDistance, double timeout, double turnMult, double distKp, bool RightSide);
     private:
         double wheelDiameter;
         double gearRatio;        
