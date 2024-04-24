@@ -27,6 +27,7 @@ void drivetrainObj::move(double targetDistance, double timeout)
 {
   double distKp = 470.0;
   double turnKp = 470.0;
+  double distKi, distKd;
   double wheelDiameter = 2.75;
   // establishes when we started the procedure
   // records a starting position of the bot
