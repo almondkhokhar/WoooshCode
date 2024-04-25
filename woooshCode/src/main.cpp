@@ -11,8 +11,8 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 
-// make class called apple and make apple.myapple can place properties about all of the apples, like ripeness, color, myapple.ripeness()=5 days, myapple2.ripeness()= 7 days, motor is a class for vex motors with properties such as spin, temperature, so you ccan make a class drivetrain with inputs of drivegroups left and right and then make a drivestraight function inside the drive class, odom applications: take wheel diameter input so when you had a previous wheel diameter for your robot you can change that parameter when you rebuild and all of your code still works. 
-// error is loss function, how far away are we from where we want to be. P value is just some number multiplied by your error and does most of the work to get you where you want to be. if p is to small your motor input will be to low to do anything and you won't reach the point you want to. if p is too high then you will reach the point you want to, but then you will overshoot it because you are going to fast so it will oscillate a lot. so you can try to get the P value very exact but its difficult and take a long time to tune, so what you can do is have it a little higher and then subtract your velocity. speed = error times kp - derivative of error times kd. what that does is calculate velocity and if we are moving faster move slower so we don't over shoot our target. dampening works by allowing us to not have to be super exact with our kp and dampen it's affect as we get closer to the target. when we are close to where we want to be but not eactly there the p value is basically 0 and the d value is basically 0 so you will be very close, but never exactly where you want to be. The I value which stands for integral is just the theoretical area under the graph of position vs time, telling you how long you've been that far away from your target. Derivative is current error and prev error starts at current error but after the first loop it becomes your current error, then current error updates, then you calculate your speed, and then your previous error. the way you track your integral is you take your error sum starting at 0 and every loop you just add your error to it, errorsum += error. so speed = p * kP + i * kI - d * kD, then tune it until you have each value affecting the program how you want, not just one individual part of it. no analytical way to find kp ki and kd so you have to take educated guesses and test your program until you have a program that functions how you want it to 
+// make class called apple and make apple.myapple can place properties about all of the apples, like ripeness, color, myapple.ripeness()=5 days, myapple2.ripeness()= 7 days, motor is a class for vex motors with properties such as spin, temperature, so you can make a class drivetrain with inputs of drivegroups left and right and then make a drivestraight function inside the drive class, odom applications: take wheel diameter input so when you had a previous wheel diameter for your robot you can change that parameter when you rebuild and all of your code still works. 
+// error is loss function, how far away are we from where we want to be. P value is just some number multiplied by your error and does most of the work to get you where you want to be. if p is to small your motor input will be to low to do anything and you won't reach the point you want to. if p is too high then you will reach the point you want to, but then you will overshoot it because you are going to fast so it will oscillate a lot. so you can try to get the P value very exact but its difficult and take a long time to tune, so what you can do is have it a little higher and then subtract your velocity. speed = error times kp - derivative of error times kd. what that does is calculate velocity and if we are moving faster move slower so we don't over shoot our target. dampening works by allowing us to not have to be super exact with our kp and dampen it's affect as we get closer to the target. when we are close to where we want to be but not eactly there the p value is basically 0 and the d value is basically 0 so you will be very close, but never exactly where you want to be. The I value which stands for integral is just the theoretical area under the graph of position vs time, telling you how long you've been that far away from your target. Derivative is current error and prev error starts at current error but after the first loop it becomes your current error, then current error updates, then you calculate your speed, and then your previous error. the way you track your integral is you take your error sum starting at 0 and every loop you just add your error to it, errorsum += error. so speed = error * kP + errorsum * kI - deriv of error * kD, then tune it until you have each value affecting the program how you want, not just one individual part of it. no analytical way to find kp ki and kd so you have to take educated guesses and test your program until you have a program that functions how you want it to 
 #include "vex.h"
 double DeltaL, DeltaR, DeltaB, currentL, currentR, PreviousL, PreviousR, DeltaTheta, X, Y, Theta, DeltaXSide, DeltaYSide, SideChord, OdomHeading;
 // initializes variables
@@ -210,6 +210,98 @@ int slowerDrop()
   wait(.25, sec);
   rDropDown.open();
   return (0);
+}
+void airplaneSkills(){
+  Inertial.setRotation(82, deg);// do this in preauto
+  Drive.move(-1000, .6);
+  Drive.turn(87, .4);
+  Drive.move(30, .8);
+  Drive.turn(-30, .7);
+  rDropDown.open();
+  kicker.spin(fwd, 70, pct);
+  kicker2.spin(fwd, 70, pct);
+  intake.spin(fwd, -100, pct);
+  wait(27, sec);
+  kicker.stop();
+  kicker2.stop();
+  rDropDown.close();
+  Drive.turn(45, .7);
+  Drive.move(25, .7);
+  Drive.turn(0, .5);
+  Drive.move(92, 1.8);
+  Drive.turn(-45, .6);
+  leftwing.open();
+  Drive.swing(30, .7, .6, 3, false);
+  Drive.move(1000, .4);
+  Drive.move(-12, .4);
+  Drive.move(1000, .4);
+  Drive.move(-12, .7);
+  leftwing.close();
+  intake.spin(fwd, 100, pct);
+  Drive.turn(-160, .9);
+  Drive.move(45, .95);
+  Drive.turn(-30, .5);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd, -100, pct);
+  Drive.swing(30, .75, .7, 3, true);
+  Drive.move(1000, .4);
+  Drive.move(-10, .3);
+  Drive.move(1000, .4);
+  rightwing.close();
+  leftwing.close();
+  Drive.move(-37, .8);
+  intake.spin(fwd, 100, pct);
+  Drive.turn(-30, .6);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd, -100, pct);
+  Drive.swing(30, .75, .7, 3, true);
+  Drive.move(1000, .5);
+  Drive.move(-10, .3);
+  Drive.move(1000, .4);
+  rightwing.close();
+  leftwing.close();
+  intake.spin(fwd, 100, pct);
+  Drive.move(-37, .8);
+  Drive.turn(-90, .7);
+  Drive.move(25, .7);
+  Drive.turn(45, .8);
+  rightwing.open();
+  leftwing.open();
+  intake.spin(fwd, -100, pct);
+  Drive.swing(45, 1, .5, 3, false);
+  Drive.move(1000, .5);
+  Drive.move(-10, .4);
+  Drive.move(1000, .5);
+  rightwing.close();
+  leftwing.close();
+  Drive.move(-25, .6);
+  intake.spin(fwd, 100, pct);
+  Drive.turn(-40, .7);
+  Drive.move(40, .8);
+  Drive.turn(45, .6);
+  rightwing.open();
+  intake.spin(fwd, -100, pct);
+  Drive.swing(40, .8, .4, 3, true);
+  Drive.move(1000, .5);
+  rightwing.close();
+  Drive.move(-20, .6);
+  Drive.turn(225, .8);
+  Drive.move(27, .7);
+  Drive.turn(180, .6);
+  hang.open();
+  intake.spin(fwd, -100, pct);
+  Drive.move(38, .8);
+  // kicker.spin(fwd, -100, pct);
+  // kicker2.spin(fwd, -100, pct);
+  // wait(3, sec);
+  // kicker.stop();
+  // kicker2.stop();
+  rDropDown.open();
+  wait(.04, sec);
+  rDropDown.close();
+
 }
 void AWPDefense()
 {
@@ -448,9 +540,12 @@ void fiveMidNear()
   printf("%lu\n", (vex::timer::system() - startTime));
 }
 
-
+void testing(){
+  Drive.move(10, 15);
+}
 void (*autonsList[])() =
 {
+  testing,
   fourMidNearset1,
   fourMidNearset2, 
   doNothing,
