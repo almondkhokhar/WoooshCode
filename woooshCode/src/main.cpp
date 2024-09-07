@@ -77,7 +77,6 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4,1);
   // Brain.Screen.print("Setting Tool SKILLS");
   // Brain.Screen.setCursor(5,1);
-  // Brain.Screen.print("Triball On Rear and Partially in Goal");
 
   // Brain.Screen.print("Selected: Slot 2");
   // Brain.Screen.setCursor(2,1);
@@ -87,11 +86,7 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4,1);
   // Brain.Screen.print("Setting Tool 1");
   // Brain.Screen.setCursor(5,1);
-  // Brain.Screen.print("Just Wing It");
-  // Brain.Screen.setCursor(6,1);
-  // Brain.Screen.print("Triball On Left Wing");
-  // Brain.Screen.setCursor(7,1);
-  // Brain.Screen.print("FINALS NO BAR TOUCH");
+
 
   // Brain.Screen.print("Selected: Slot 3");
   // Brain.Screen.setCursor(2, 1);
@@ -101,12 +96,7 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4, 1);
   // Brain.Screen.print("Setting Tool 2");
   // Brain.Screen.setCursor(5, 1);
-  // Brain.Screen.print("Set Tool Edge on Goofy Corner");
-  // Brain.Screen.setCursor(6, 1);
-  // Brain.Screen.print("Triball On Left Wing");
-  // Brain.Screen.setCursor(7, 1);
-  // Brain.Screen.print("FINALS NO BAR TOUCH");
-
+  
   // Brain.Screen.print("Selected: Slot 4");
   // Brain.Screen.setCursor(2,1);
   // Brain.Screen.print("Check Air");
@@ -115,11 +105,6 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4,1);
   // Brain.Screen.print("Setting Tool 1");
   // Brain.Screen.setCursor(5,1);
-  // Brain.Screen.print("REMAKE TOOL");
-  // Brain.Screen.setCursor(6,1);
-  // Brain.Screen.print("Triball On Left Wing");
-  // Brain.Screen.setCursor(7,1);
-  // Brain.Screen.print("FINALS NO BAR TOUCH");
 
   // Brain.Screen.print("Selected: Slot 5");
   // Brain.Screen.setCursor(2,1);
@@ -143,11 +128,7 @@ void pre_auton(void)
   Brain.Screen.setCursor(4,1);
   Brain.Screen.print("Setting Tool 2");
   Brain.Screen.setCursor(5,1);
-  Brain.Screen.print("NOT YET CREATED");
-  Brain.Screen.setCursor(6,1);
-  Brain.Screen.print("Triball On Right Wing");
-  Brain.Screen.setCursor(7,1);
-  Brain.Screen.print("Touches Bar MAYBE");
+
 
   // Brain.Screen.print("Selected: Slot 7");
   // Brain.Screen.setCursor(2,1);
@@ -157,11 +138,7 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4,1);
   // Brain.Screen.print("Setting Tool 2");
   // Brain.Screen.setCursor(5,1);
-  // Brain.Screen.print("NOT YET CREATED");
-  // Brain.Screen.setCursor(6,1);
-  // Brain.Screen.print("Triball On Right Wing");
-  // Brain.Screen.setCursor(7,1);
-  // Brain.Screen.print("NO BAR TOUCH");
+
 
   // Brain.Screen.print("Selected: Slot 8");
   // Brain.Screen.setCursor(2,1);
@@ -171,374 +148,10 @@ void pre_auton(void)
   // Brain.Screen.setCursor(4,1);
   // Brain.Screen.print("Setting Tool 1");
   // Brain.Screen.setCursor(5,1);
-  // Brain.Screen.print("3 Puzzle Pieces Away From Black Bar");
-  // Brain.Screen.setCursor(6,1);
-  // Brain.Screen.print("Triball On Right Wing");
-  // Brain.Screen.setCursor(7,1);
-  // Brain.Screen.print("NO BAR TOUCH");
+
   // Auton selector with potentiometer
 }
 
-int lfQuickfire()
-{
-  leftwing.open();
-  wait(.2, sec);
-  leftwing.close();
-  return (0);
-}
-int lfSlow()
-{
-  wait(.2, sec);
-  leftwing.open();
-  return (0);
-}
-int rfQuickfire()
-{
-  rightwing.open();
-  wait(.2, sec);
-  rightwing.close();
-  return (0);
-}
-int slowDrop()
-{
-  wait(.1, sec);
-  rDropDown.open();
-  return (0);
-}
-int slowerDrop()
-{
-  wait(.25, sec);
-  rDropDown.open();
-  return (0);
-}
-void airplaneSkills(){
-  Inertial.setRotation(82, deg);// do this in preauto
-  Drive.move(-1000, .6);
-  Drive.turn(87, .4);
-  Drive.move(30, .8);
-  Drive.turn(-30, .7);
-  rDropDown.open();
-  kicker.spin(fwd, 70, pct);
-  kicker2.spin(fwd, 70, pct);
-  intake.spin(fwd, -100, pct);
-  wait(27, sec);
-  kicker.stop();
-  kicker2.stop();
-  rDropDown.close();
-  Drive.turn(45, .7);
-  Drive.move(25, .7);
-  Drive.turn(0, .5);
-  Drive.move(92, 1.8);
-  Drive.turn(-45, .6);
-  leftwing.open();
-  Drive.swing(30, .7, .6, 3, false);
-  Drive.move(1000, .4);
-  Drive.move(-12, .4);
-  Drive.move(1000, .4);
-  Drive.move(-12, .7);
-  leftwing.close();
-  intake.spin(fwd, 100, pct);
-  Drive.turn(-160, .9);
-  Drive.move(45, .95);
-  Drive.turn(-30, .5);
-  rightwing.open();
-  leftwing.open();
-  intake.spin(fwd, -100, pct);
-  Drive.swing(30, .75, .7, 3, true);
-  Drive.move(1000, .4);
-  Drive.move(-10, .3);
-  Drive.move(1000, .4);
-  rightwing.close();
-  leftwing.close();
-  Drive.move(-37, .8);
-  intake.spin(fwd, 100, pct);
-  Drive.turn(-30, .6);
-  rightwing.open();
-  leftwing.open();
-  intake.spin(fwd, -100, pct);
-  Drive.swing(30, .75, .7, 3, true);
-  Drive.move(1000, .5);
-  Drive.move(-10, .3);
-  Drive.move(1000, .4);
-  rightwing.close();
-  leftwing.close();
-  intake.spin(fwd, 100, pct);
-  Drive.move(-37, .8);
-  Drive.turn(-90, .7);
-  Drive.move(25, .7);
-  Drive.turn(45, .8);
-  rightwing.open();
-  leftwing.open();
-  intake.spin(fwd, -100, pct);
-  Drive.swing(45, 1, .5, 3, false);
-  Drive.move(1000, .5);
-  Drive.move(-10, .4);
-  Drive.move(1000, .5);
-  rightwing.close();
-  leftwing.close();
-  Drive.move(-25, .6);
-  intake.spin(fwd, 100, pct);
-  Drive.turn(-40, .7);
-  Drive.move(40, .8);
-  Drive.turn(45, .6);
-  rightwing.open();
-  intake.spin(fwd, -100, pct);
-  Drive.swing(40, .8, .4, 3, true);
-  Drive.move(1000, .5);
-  rightwing.close();
-  Drive.move(-20, .6);
-  Drive.turn(225, .8);
-  Drive.move(27, .7);
-  Drive.turn(180, .6);
-  hang.open();
-  intake.spin(fwd, -100, pct);
-  Drive.move(38, .8);
-  // kicker.spin(fwd, -100, pct);
-  // kicker2.spin(fwd, -100, pct);
-  // wait(3, sec);
-  // kicker.stop();
-  // kicker2.stop();
-  rDropDown.open();
-  wait(.04, sec);
-  rDropDown.close();
-
-}
-void AWPDefense()
-{
-  // removes triball
-  rDropDown.open();
-  Drive.move(5, .3);
-  Drive.turn(-39, 1.2);
-  rDropDown.close();
-  // Shoots matchload
-  wait(.6, sec);
-  intake.spin(fwd, -100, pct);
-  wait(7, sec);
-  rightwing.open();
-  Drive.move(42, 2);
-  wait(.5, sec);
-  rightwing.close();
-}
-// Clears triballs starting on our side and removes one triball from the corner on the left side of the red goal
-// Setup: Front left wheel in the notch of the field tiles intake up and aimed at the goal red triballs: one with midline at the back of the wing other with one corner in the blue goal
-
-void doNothing()
-{
-  // does nothing
-}
-
-void fiveMidFarset1()
-{
-  int startTime = vex::timer::system();
-  task rwing = task(rfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.move(48, .95);
-  Drive.move(-5, .4);
-  intake.stop();
-  Drive.turn(97, .6);
-  intake.spin(fwd, -100, pct);
-  wait(.3, sec);
-  Drive.move(1000, .6);
-  Drive.move(-37, .7);
-  intake.spin(fwd, 100, pct);
-  Drive.turn(230, .7);
-  Drive.move(17, .55);
-  Drive.turn(145, .75);
-
-  Drive.move(52, 1.2);
-  Drive.turn(55, .6);
-  rDropDown.open();
-  intake.spin(fwd, -100, pct);
-  Drive.move(18, .5);
-  Drive.turn(10, .5);
-  rDropDown.close();
-  wait(.1, sec);
-  Drive.turn(-110, .8);
-  Drive.move(40, .8);
-  Drive.turn(-77, .5);
-  intake.spin(fwd, 100, pct);
-  Drive.move(20, .9);
-  Drive.move(-50, 1);
-  Drive.turn(60, .7);
-  intake.spin(fwd, -100, pct);
-  leftwing.open();
-  Drive.swing(30, .7, .6, 3, false);
-  Drive.move(1000, .3);
-  Drive.move(-10, .3);
-  leftwing.close();
-  // wait(.2, sec);
-  Drive.move(1000, .4);
-  Drive.move(-10, .4);
-
-  printf("%lu\n", (vex::timer::system() - startTime));
-}
-void fiveMidFarset2()
-{
-  int startTime = vex::timer::system();
-  task rwing = task(rfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.move(57, 1.05);
-  Drive.move(-8, .5);
-  Drive.turn(120, .8);
-  intake.spin(fwd, -100, pct);
-  wait(.15,sec);
-  Drive.move(1000, .6);
-  Drive.move(-30, .7);
-  intake.spin(fwd, 100, pct);
-  Drive.turn(255, .7);
-  Drive.move(20, .65);
-  Drive.turn(170, .65);
-
-  Drive.move(52, 1);
-  Drive.turn(80, .6);
-  rDropDown.open();
-  intake.spin(fwd, -100, pct);
-  Drive.move(18, .5);
-  Drive.turn(35, .4);
-  rDropDown.close();
-  wait(.1, sec);
-  Drive.turn(-85, .78);
-  Drive.move(40, .78);
-  Drive.turn(-52, .5);
-  intake.spin(fwd, 100, pct);
-  Drive.move(22, .9);
-  Drive.move(-52, 1);
-  Drive.turn(85, .7);
-  intake.spin(fwd, -100, pct);
-  leftwing.open();
-  Drive.swing(30, .7, .6, 3, false);
-  Drive.move(1000, .3);
-  Drive.move(-10, .2);
-  leftwing.close();
-  printf("%lu\n", (vex::timer::system() - startTime));
-  wait(.2, sec);
-  Drive.move(1000, .4);
-  Drive.move(-10, .4);
-
-}
-void sixMidFar()
-{
-  int startTime = vex::timer::system();
-  task rwing = task(rfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.move(60, 1.2);
-
-  printf("%lu\n", (vex::timer::system() - startTime));
-}
-void fourMidNearset1()
-{
-  int startTime = vex::timer::system();
-  task lwing = task(lfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.move(49, 1);
-  Drive.move(-54, 1.2);
-  Drive.turn(70, 1);
-  intake.spin(fwd, -100, pct);
-  Drive.turn(100, .8);
-  leftwing.open();
-  Drive.move(-28, .7);
-  leftwing.close();
-  Drive.turn(130, .8);
-  task dropSlow = task(slowDrop);
-  Drive.move(25, .7);
-  Drive.turn(30, .8);
-  rDropDown.close();
-  Drive.turn(120, .8);
-  Drive.move(-20, .7);
-  Drive.turn(170, .8);
-  rDropDown.open();
-  Drive.move(-15, .6);
-  Drive.move(5, .4);
-  rDropDown.close();
-  Drive.turn(120, .8);
-  rightwing.open();
-  Drive.move(36, .8);
-  Drive.turn(80, .7);
-  Drive.move(29, .8);
-  Drive.turn(77, .4);
-  Drive.move(-42, .9);
-  Drive.turn(130, .4);
-  printf("%lu\n", (vex::timer::system() - startTime));
-}
-
-void fourMidNearset2()
-{
-  int startTime = vex::timer::system();
-  task lwing = task(lfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.swing(65, 1.4, .86, 3, false);
-  Drive.move(-20, .7);
-  Drive.turn(-160, .9);
-  Drive.move(58, 1.3);
-  Drive.turn(-240, .7);
-  task dropSlow = task(slowerDrop);
-  Drive.move(17, .6);
-  Drive.turn(-300, .5);
-  rDropDown.close();
-  intake.spin(fwd, -100, pct);
-  wait(.5, sec);
-  Drive.turn(-260, .7);
-  Drive.move(-27, .7);
-  Drive.turn(-210, .7);
-  rDropDown.open();
-  Drive.move(-8, .6);
-  Drive.turn(-215, .5);
-  Drive.move(10, .5);
-  intake.spin(fwd, -100, pct);
-  rDropDown.close();
-  Drive.turn(-240, .5);
-  Drive.move(29, .8);
-  Drive.turn(-300, .7);
-  rightwing.open();
-  Drive.move(34, .9);
-  Drive.move(-46, 1.2);
-  rightwing.close();
-  Drive.turn(-280, .6);
-  
-  printf("%lu\n", (vex::timer::system() - startTime));
-}
-
-void fiveMidNear()
-{
-  int startTime = vex::timer::system();
-  task lwing = task(lfQuickfire);
-  intake.spin(fwd, 100, pct);
-  Drive.move(50, 1);
-  Drive.turn(80, .6);
-  task slowlwing = task(lfSlow);
-  Drive.move(28, .7);
-  intake.stop();
-  Drive.turn(75, .5);
-  Drive.move(-20, .65);
-  Drive.turn(190, .8);
-  leftwing.close();
-  Drive.move(53, 1.1);
-  Drive.turn(110, .6);
-  Drive.move(-24, .7);
-  Drive.turn(167, .6);
-  rDropDown.open();
-  Drive.move(-17.6, .6);
-  Drive.turn(167, .3);
-  rDropDown.close();
-  Drive.move(24, .7);
-  Drive.turn(130, .6);
-  task dropSlow = task(slowDrop);
-  Drive.move(16.5, .6);
-  Drive.turn(45, .4);
-  wait(.5, sec);
-  Drive.turn(130, .5);
-  rDropDown.close();
-  Drive.move(12, .6);
-  Drive.turn(75, .6);
-  intake.spin(fwd, -100, pct);
-  Drive.move(35, .9);
-  Drive.turn(77, .3);
-  Drive.move(-40, .8);
-  Drive.turn(130, .3);
-  Drive.move(-10, .5);
-
-  printf("%lu\n", (vex::timer::system() - startTime));
-}
 
 void testing(){
   Drive.move(10, 15);
